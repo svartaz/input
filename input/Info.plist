@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>TISInputSourceID</key>
+	<string>space.sumi.inputmethod.2025</string>
+	<key>TISIntendedLanguage</key>
+	<string>en</string>
+	<key>InputMethodConnectionName</key>
+	<string>input-2025-connection</string>
+	<key>InputMethodServerControllerClass</key>
+	<string>$(PRODUCT_MODULE_NAME).InputController</string>
+	<key>LSBackgroundOnly</key>
+	<true/>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSPrincipalClass</key>
+	<string>$(PRODUCT_MODULE_NAME).NSManualApplication</string>
+	<key>tsInputMethodCharacterRepertoireKey</key>
+	<array>
+		<string>Latn</string>
+	</array>
+</dict>
+</plist>
