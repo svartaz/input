@@ -1,5 +1,6 @@
 import Cocoa
 import InputMethodKit
+import AppKit
 
 enum State {
     case text
@@ -7,83 +8,86 @@ enum State {
     case query(String, String)
 }
 
+let notFonud = NSRange(location: NSNotFound, length: NSNotFound)
+
 @objc(InputController)
 class InputController: IMKInputController {
     var state = State.text
     var candidates = IMKCandidates()
-    
+
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
         candidates = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
-        
+
         super.init(server: server, delegate: delegate, client: inputClient)
     }
-    
+
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
-        let here = NSRange(location: NSNotFound, length: NSNotFound)
+        NSLog("IMKInputController handle: \(event.type), \(event.keyCode), \(event.characters)")
         
         if
             let event = event,
-            let client = sender as? IMKTextInput
+            event.type == .keyDown,
+            ![
+                51,  // delete
+                48,  // tab
+                123, // left
+                124, // right
+                125, // down
+                126  // up
+            ].contains(event.keyCode),
+            let client = sender as? IMKTextInput,
+            let string = event.characters
         {
-            NSLog("IMKInputController handle: " + (event.characters ?? "nil"))
-            
-            switch(state) {
+            switch state {
             case .text:
-                if event.characters == "\\" {
+                switch string {
+                case "\\":
                     state = .mode("")
-                    client.insertText("()", replacementRange: here)
+                    client.insertText("()", replacementRange: notFonud)
                     return true
-                }
-                else if let text = event.characters {
-                    client.insertText(text, replacementRange: here)
-                    return true
-                }
                 
-            case .mode(let key):
-                // backslash twice: put backslash and initialise
-                if event.characters == "\\" {
-                    client.insertText("\\", replacementRange: here)
+                case "\n", "\r", "\r\n":
+                    client.insertText("\n", replacementRange: notFonud)
+               
+                default:
+                    client.insertText(string, replacementRange: notFonud)
+                    return true
+                }
+            case .mode(let k):
+                switch string {
+                case "\\":
+                    client.insertText("\\", replacementRange: notFonud)
                     state = .text
-                    client.insertText("^", replacementRange: here)
+                    client.insertText("^", replacementRange: notFonud)
                     return true
-                }
-                // return pressed
-                else if event.keyCode == kVK_Return {
-                    // set current key as mode
-                    if dict.keys.contains(key) {
-                        state = .query(key, "")
-                        client.insertText("[" + key + "]", replacementRange: here)
-                        return true
-                    }
-                    // cannot find key: output key as plain text and initialise
-                    else {
-                        client.insertText(key, replacementRange: here)
-                        state = .text
-                        client.insertText("^", replacementRange: here)
-                        return true
-                    }
-                }
-                else if let string = event.characters {
-                    state = .mode(key + string)
-                    client.insertText("(" + key + string + ")", replacementRange: here)
-                    return true
-                }
-                
-            case .query(let key, let buffer):
-                if event.keyCode == kVK_Return {
-                    candidates.hide()
-                    
-                    state = .text
-                    client.insertText("^", replacementRange: here)
-                    
-                    return true
-                }
-                else if let text = event.characters {
-                    candidates.show()
-                    candidates.setCandidateData(["a", "b", "c"])
-                    //candidates.interpretKeyEvents([event])
 
-                    client.insertText(text, replacementRange: here)
+                case "\n", "\r", "\r\n":
+                    if dict.keys.contains(k) {
+                        state = .query(k, "")
+                        client.insertText("[\(k),]", replacementRange: notFonud)
+                        return true
+
+                    } else {
+                        client.insertText(k, replacementRange: notFonud)
+                        state = .text
+                        client.insertText("^", replacementRange: notFonud)
+                        return true
+                    }
+                default:
+                    state = .mode(k + string)
+                    client.insertText("(\(k + string))", replacementRange: notFonud)
+                    return true
+                }
+            case .query(let k, let q):
+                switch string {
+                case "\n", "\r", "\r\n":
+                    // choose
+                    state = .text
+                    client.insertText("^", replacementRange: notFonud)
+                    return true
+                default:
+                    state = .query(k, q + string)
+                    client.insertText("[\(k),\(q + string)]", replacementRange: notFonud)
                     return true
                 }
             }
