@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A48C6CF22D846C5600DD8728 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = A48C6CF12D846C5600DD8728 /* Collections */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		A44ED4602D7F076700C3448F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -55,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A48C6CF22D846C5600DD8728 /* Collections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +118,7 @@
 			);
 			name = input;
 			packageProductDependencies = (
+				A48C6CF12D846C5600DD8728 /* Collections */,
 			);
 			productName = input;
 			productReference = A44ED44F2D7F076600C3448F /* input.app */;
@@ -190,6 +196,9 @@
 			);
 			mainGroup = A44ED4462D7F076600C3448F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A48C6CF02D846B3300DD8728 /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A44ED4502D7F076600C3448F /* Products */;
 			projectDirPath = "";
@@ -561,6 +570,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A48C6CF02D846B3300DD8728 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A48C6CF12D846C5600DD8728 /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A48C6CF02D846B3300DD8728 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A44ED4472D7F076600C3448F /* Project object */;
 }
