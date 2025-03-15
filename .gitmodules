@@ -1,0 +1,6 @@
+[submodule "make-json/submodules/jyutping-table"]
+	path = make-json/submodules/jyutping-table
+	url = https://github.com/lshk-org/jyutping-table.git
+[submodule "make-json/submodules/Zyevio"]
+	path = make-json/submodules/Zyevio
+	url = https://github.com/Magnezone462/Zyevio.git

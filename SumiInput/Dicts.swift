@@ -60,6 +60,10 @@ let dicts: Dictionary<String, (String, Dictionary<String, Array<String>>)> = [
         "hanzi",
         fetchDict("hanz")
     ),
+    "yue": (
+        "cantonese",
+        fetchDict("yue")
+    ),
 
     "grek": (
         "greek",
