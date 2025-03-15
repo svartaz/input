@@ -182,7 +182,7 @@ class InputController: IMKInputController {
                 let ranges = $0.key.ranges(of: keyDict)
                 
                 if keyDict == "" || !ranges.isEmpty {
-                    return Optional.some((ranges.startIndex, $0.key, $0.value.0))
+                    return Optional.some((ranges.first!.lowerBound, $0.key, $0.value.0))
                 } else {
                     return nil
                 }
@@ -201,7 +201,7 @@ class InputController: IMKInputController {
                 let ranges = k.ranges(of: keyWord)
                 
                 if keyWord == "" || !ranges.isEmpty {
-                    return words.map { (ranges.startIndex, k, $0) }
+                    return words.map { (ranges.first!.lowerBound, k, $0) }
                 }
                 else {
                     return []
@@ -209,7 +209,7 @@ class InputController: IMKInputController {
             }
         
         let maybeSorted =
-        2 <= keyWord.count || unsorted.count < 400
+        unsorted.count < 4000
         ? unsorted.sorted(by: { (a, b) in (a.0, a.1.count, a.2) < (b.0, b.1.count, b.2) })
         : unsorted
         
