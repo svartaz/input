@@ -2,10 +2,10 @@ import Foundation
 
 let unicodes = [0..<0xD800, 0xE000..<0x10FFFF].joined()
 
-private func fetchDict(_ name: String) -> Dictionary<String, Array<String>> {
+private func fetchDict(_ name: String) -> Dictionary<String, [String]> {
     do {
         return try JSONDecoder().decode(
-            Dictionary<String, Array<String>>.self,
+            Dictionary<String, [String]>.self,
             from: try Data(
                 contentsOf: Bundle.main.url(forResource: "dicts.bundle/\(name)", withExtension: "json")!
             )
@@ -15,19 +15,26 @@ private func fetchDict(_ name: String) -> Dictionary<String, Array<String>> {
     }
 }
 
-let dicts: Dictionary<String, (String, Dictionary<String, Array<String>>)> = [
+let dicts: Dictionary<String, (String, Dictionary<String, [String]>)> = [
     "u": (
         "unicode name",
         Dictionary(
-            uniqueKeysWithValues: unicodes.map({
-                (
-                    UnicodeScalar($0)?.properties.nameAlias?.lowercased()
-                    ?? UnicodeScalar($0)?.properties.name?.lowercased()
-                    ?? String($0)
-                    ,
-                    [String(UnicodeScalar($0)!)]
-                )
-            })
+            uniqueKeysWithValues: unicodes.flatMap {
+                if let name =
+                    UnicodeScalar($0)?.properties.nameAlias
+                    ?? UnicodeScalar($0)?.properties.name
+                {
+                    return [(
+                        name.lowercased()
+                        ,
+                        [String(UnicodeScalar($0)!)]
+                    )]
+
+                }
+                else {
+                    return []
+                }
+            }
         )
     ),
     "u10": (
@@ -52,6 +59,15 @@ let dicts: Dictionary<String, (String, Dictionary<String, Array<String>>)> = [
             })
         )
     ),
+    "grek": (
+        "greek",
+        fetchDict("grek")
+    ),
+    
+    "cyrl": (
+        "cyrillic",
+        fetchDict("cyrl")
+    ),
     "hrkt": (
         "hiragana + katakana",
         fetchDict("hrkt")
@@ -64,14 +80,8 @@ let dicts: Dictionary<String, (String, Dictionary<String, Array<String>>)> = [
         "cantonese",
         fetchDict("yue")
     ),
-
-    "grek": (
-        "greek",
-        fetchDict("grek")
+    "hang": (
+        "hangul",
+        fetchDict("hang")
     ),
-    
-    "cyrl": (
-        "cyrillic",
-        fetchDict("cyrl")
-    )
 ]

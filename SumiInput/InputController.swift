@@ -31,19 +31,19 @@ class InputController: IMKInputController {
     
     var state: State {
         didSet {
-            NSLog("SumiInput InputController didSet")
+            NSLog("InputController didSet")
             
             switch state {
             case .text:
                 candidates.hide()
                 candidates.update()
                 self.client().setMarkedText("",
-                    selectionRange: notFonud,
-                    replacementRange: notFonud)
-
+                                            selectionRange: notFonud,
+                                            replacementRange: notFonud)
+                
             case .selectDict(let keyDict):
-                NSLog("SumiInput InputController didSet .selectDict(\(keyDict))")
-
+                NSLog("InputController didSet .selectDict(\(keyDict))")
+                
                 self.client().setMarkedText(
                     NSAttributedString(string: letterKey + keyDict, attributes: self.mark(
                         forStyle: kTSMHiliteSelectedConvertedText,
@@ -54,9 +54,9 @@ class InputController: IMKInputController {
                 
                 candidates.update()
                 candidates.show()
-          
+                
             case .select(let keyDict, let keyWord):
-                NSLog("SumiInput InputController toSelect(\(keyDict), \(keyWord))")
+                NSLog("InputController toSelect(\(keyDict), \(keyWord))")
                 
                 let nameDict = dicts[keyDict]!.0
                 
@@ -73,11 +73,11 @@ class InputController: IMKInputController {
             }
         }
     }
-
+    
     let letterKey = "\\"
-
+    
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
-        NSLog("SumiInput InputController init!")
+        NSLog("InputController init!")
         state = .text
         candidates = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
         super.init(server: server, delegate: delegate, client: inputClient)
@@ -85,8 +85,8 @@ class InputController: IMKInputController {
     
     
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
-        NSLog("SumiInput InputController handle \(state), \(event.keyCode), \(event.characters), \(candidates)")
-
+        NSLog("InputController handle \(state), \(event.keyCode), \(event.characters), \(candidates)")
+        
         guard let client = sender as? IMKTextInput else {
             return super.handle(event, client: sender);
         }
@@ -128,23 +128,13 @@ class InputController: IMKInputController {
             
             // back
         case
-            (.selectDict(""), Key.delete.rawValue),
-            (.selectDict(""), Key.escape.rawValue)
+            (_, Key.escape.rawValue),
+            (.selectDict(""), Key.delete.rawValue)
             :
             state = .text
             
-        case
-            (.select(let keyDict, ""), Key.delete.rawValue),
-            (.select(let keyDict, ""), Key.escape.rawValue)
-            :
+        case (.select(let keyDict, ""), Key.delete.rawValue):
             state = .selectDict(keyDict)
-            
-            // clear
-        case (.selectDict(_), Key.escape.rawValue):
-            state = .selectDict("")
-            
-        case (.select(let keyDict, _), Key.escape.rawValue):
-            state = .select(keyDict, "")
             
             // delete
         case (.selectDict(let keyDict), Key.delete.rawValue):
@@ -170,45 +160,66 @@ class InputController: IMKInputController {
     
     
     override func candidates(_ sender: Any!) -> [Any]! {
-        NSLog("SumiInput InputController candidates")
+        NSLog("InputController candidates")
         
         if case .selectDict(let keyDict) = state {
-            return Array<String>(dicts
-                .lazy
-                .filter {
-                    keyDict == "" || $0.key.contains(keyDict) }
-                .sorted(by: {
-                    ($0.key.ranges(of: keyDict).startIndex, $0.key.count, $0.value.0) <
-                    ($1.key.ranges(of: keyDict).startIndex, $1.key.count, $1.value.0) })
-                .map {
-                    "\($0.key): \($0.value.0)" }
-            )
+            return filterSortDict(keyDict)
         }
         else if
             case .select(let keyDict, let keyWord) = state,
             let (_, dict) = dicts[keyDict]
         {
-            return Array<String>(dict
-                .lazy
-                .filter {
-                    keyWord == "" || $0.key.contains(keyWord) }
-                .flatMap { (k: String, words: Array<String>) in
-                    words.map { (k, $0) }
-                }
-                .sorted(by: {
-                    ($0.0.ranges(of: keyDict).startIndex, $0.0.count, $0.1) <
-                    ($1.0.ranges(of: keyDict).startIndex, $1.0.count, $1.1) })
-                .map { "\($0.0): \($0.1)" }
-            )
+            return filterSortWord(dict, keyWord)
         }
-
+        
         return []
     }
     
     
+    func filterSortDict(_ keyDict: String) -> [String] {
+        let unsorted = dicts
+            .compactMap {
+                let ranges = $0.key.ranges(of: keyDict)
+                
+                if keyDict == "" || !ranges.isEmpty {
+                    return Optional.some((ranges.startIndex, $0.key, $0.value.0))
+                } else {
+                    return nil
+                }
+            }
+        
+        return unsorted
+            .sorted(by: { (a, b) in (a.0, a.1.count, a.2) < (b.0, b.1.count, b.2) })
+            .map { "\($0.1): \($0.2)" }
+    }
+    
+    
+    func filterSortWord(_ dict: Dictionary<String, [String]>, _ keyWord: String) -> [String] {
+        let unsorted = dict
+            .flatMap {
+                let (k, words) = $0
+                let ranges = k.ranges(of: keyWord)
+                
+                if keyWord == "" || !ranges.isEmpty {
+                    return words.map { (ranges.startIndex, k, $0) }
+                }
+                else {
+                    return []
+                }
+            }
+        
+        let maybeSorted =
+        2 <= keyWord.count || unsorted.count < 400
+        ? unsorted.sorted(by: { (a, b) in (a.0, a.1.count, a.2) < (b.0, b.1.count, b.2) })
+        : unsorted
+        
+        return maybeSorted.map { "\($0.1): \($0.2)" }
+    }
+    
+    
     override func candidateSelected(_ candidateString: NSAttributedString!) {
-        NSLog("SumiInput InputController candidateSelected(\(candidateString))")
-
+        NSLog("InputController candidateSelected(\(candidateString))")
+        
         switch state {
         case .text:
             fatalError("should not select in text mode")
@@ -227,7 +238,7 @@ class InputController: IMKInputController {
     }
     
     override func deactivateServer(_ sender: Any!) {
-        NSLog("SumiInput InputController deactivateServer")
+        NSLog("InputController deactivateServer")
         candidates.hide()
     }
 }
