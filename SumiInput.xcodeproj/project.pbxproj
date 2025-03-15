@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A48C6CF22D846C5600DD8728 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = A48C6CF12D846C5600DD8728 /* Collections */; };
+		A4AFF3AC2D8584E0006600C5 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = A4AFF3AB2D8584E0006600C5 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -18,38 +18,31 @@
 			remoteGlobalIDString = A44ED44E2D7F076600C3448F;
 			remoteInfo = input;
 		};
-		A44ED46A2D7F076700C3448F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A44ED4472D7F076600C3448F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A44ED44E2D7F076600C3448F;
-			remoteInfo = input;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A44ED44F2D7F076600C3448F /* input.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A44ED45F2D7F076700C3448F /* inputTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = inputTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A44ED4692D7F076700C3448F /* inputUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = inputUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A44ED44F2D7F076600C3448F /* SumiInput.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SumiInput.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A44ED45F2D7F076700C3448F /* SumiInputTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SumiInputTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4AFF3AB2D8584E0006600C5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		A44ED47D2D7F0C4D00C3448F /* Exceptions for "input" folder in "input" target */ = {
+		A44ED47D2D7F0C4D00C3448F /* Exceptions for "SumiInput" folder in "SumiInput" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = A44ED44E2D7F076600C3448F /* input */;
+			target = A44ED44E2D7F076600C3448F /* SumiInput */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A44ED4512D7F076600C3448F /* input */ = {
+		A44ED4512D7F076600C3448F /* SumiInput */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				A44ED47D2D7F0C4D00C3448F /* Exceptions for "input" folder in "input" target */,
+				A44ED47D2D7F0C4D00C3448F /* Exceptions for "SumiInput" folder in "SumiInput" target */,
 			);
-			path = input;
+			path = SumiInput;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -59,18 +52,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A48C6CF22D846C5600DD8728 /* Collections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A44ED45C2D7F076700C3448F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A44ED4662D7F076700C3448F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -83,17 +68,17 @@
 		A44ED4462D7F076600C3448F = {
 			isa = PBXGroup;
 			children = (
-				A44ED4512D7F076600C3448F /* input */,
+				A44ED4512D7F076600C3448F /* SumiInput */,
 				A44ED4502D7F076600C3448F /* Products */,
+				A4AFF3AB2D8584E0006600C5 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
 		A44ED4502D7F076600C3448F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A44ED44F2D7F076600C3448F /* input.app */,
-				A44ED45F2D7F076700C3448F /* inputTests.xctest */,
-				A44ED4692D7F076700C3448F /* inputUITests.xctest */,
+				A44ED44F2D7F076600C3448F /* SumiInput.app */,
+				A44ED45F2D7F076700C3448F /* SumiInputTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,9 +86,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A44ED44E2D7F076600C3448F /* input */ = {
+		A44ED44E2D7F076600C3448F /* SumiInput */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A44ED4732D7F076700C3448F /* Build configuration list for PBXNativeTarget "input" */;
+			buildConfigurationList = A44ED4732D7F076700C3448F /* Build configuration list for PBXNativeTarget "SumiInput" */;
 			buildPhases = (
 				A44ED44B2D7F076600C3448F /* Sources */,
 				A44ED44C2D7F076600C3448F /* Frameworks */,
@@ -114,19 +99,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				A44ED4512D7F076600C3448F /* input */,
+				A44ED4512D7F076600C3448F /* SumiInput */,
 			);
-			name = input;
+			name = SumiInput;
 			packageProductDependencies = (
-				A48C6CF12D846C5600DD8728 /* Collections */,
 			);
 			productName = input;
-			productReference = A44ED44F2D7F076600C3448F /* input.app */;
+			productReference = A44ED44F2D7F076600C3448F /* SumiInput.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A44ED45E2D7F076700C3448F /* inputTests */ = {
+		A44ED45E2D7F076700C3448F /* SumiInputTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A44ED4762D7F076700C3448F /* Build configuration list for PBXNativeTarget "inputTests" */;
+			buildConfigurationList = A44ED4762D7F076700C3448F /* Build configuration list for PBXNativeTarget "SumiInputTests" */;
 			buildPhases = (
 				A44ED45B2D7F076700C3448F /* Sources */,
 				A44ED45C2D7F076700C3448F /* Frameworks */,
@@ -137,32 +121,12 @@
 			dependencies = (
 				A44ED4612D7F076700C3448F /* PBXTargetDependency */,
 			);
-			name = inputTests;
+			name = SumiInputTests;
 			packageProductDependencies = (
 			);
 			productName = inputTests;
-			productReference = A44ED45F2D7F076700C3448F /* inputTests.xctest */;
+			productReference = A44ED45F2D7F076700C3448F /* SumiInputTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		A44ED4682D7F076700C3448F /* inputUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A44ED4792D7F076700C3448F /* Build configuration list for PBXNativeTarget "inputUITests" */;
-			buildPhases = (
-				A44ED4652D7F076700C3448F /* Sources */,
-				A44ED4662D7F076700C3448F /* Frameworks */,
-				A44ED4672D7F076700C3448F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				A44ED46B2D7F076700C3448F /* PBXTargetDependency */,
-			);
-			name = inputUITests;
-			packageProductDependencies = (
-			);
-			productName = inputUITests;
-			productReference = A44ED4692D7F076700C3448F /* inputUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -181,13 +145,9 @@
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = A44ED44E2D7F076600C3448F;
 					};
-					A44ED4682D7F076700C3448F = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = A44ED44E2D7F076600C3448F;
-					};
 				};
 			};
-			buildConfigurationList = A44ED44A2D7F076600C3448F /* Build configuration list for PBXProject "input" */;
+			buildConfigurationList = A44ED44A2D7F076600C3448F /* Build configuration list for PBXProject "SumiInput" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -197,16 +157,14 @@
 			mainGroup = A44ED4462D7F076600C3448F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				A48C6CF02D846B3300DD8728 /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A44ED4502D7F076600C3448F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A44ED44E2D7F076600C3448F /* input */,
-				A44ED45E2D7F076700C3448F /* inputTests */,
-				A44ED4682D7F076700C3448F /* inputUITests */,
+				A44ED44E2D7F076600C3448F /* SumiInput */,
+				A44ED45E2D7F076700C3448F /* SumiInputTests */,
 			);
 		};
 /* End PBXProject section */
@@ -226,13 +184,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A44ED4672D7F076700C3448F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -240,17 +191,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4AFF3AC2D8584E0006600C5 /* README.md in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A44ED45B2D7F076700C3448F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A44ED4652D7F076700C3448F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -262,13 +207,8 @@
 /* Begin PBXTargetDependency section */
 		A44ED4612D7F076700C3448F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A44ED44E2D7F076600C3448F /* input */;
+			target = A44ED44E2D7F076600C3448F /* SumiInput */;
 			targetProxy = A44ED4602D7F076700C3448F /* PBXContainerItemProxy */;
-		};
-		A44ED46B2D7F076700C3448F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A44ED44E2D7F076600C3448F /* input */;
-			targetProxy = A44ED46A2D7F076700C3448F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -400,12 +340,15 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"input/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"SumiInput/Preview Content\"";
 				DEVELOPMENT_TEAM = 95U4XKU2DW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = input/Info.plist;
+				INFOPLIST_FILE = SumiInput/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSBackgroundOnly = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSPrincipalClass = "$(PRODUCT_MODULE_NAME).NSManualApplication";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -433,12 +376,15 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"input/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"SumiInput/Preview Content\"";
 				DEVELOPMENT_TEAM = 95U4XKU2DW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = input/Info.plist;
+				INFOPLIST_FILE = SumiInput/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSBackgroundOnly = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSPrincipalClass = "$(PRODUCT_MODULE_NAME).NSManualApplication";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -473,7 +419,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/input.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/input";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SumiInput.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SumiInput";
 			};
 			name = Debug;
 		};
@@ -492,48 +438,14 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/input.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/input";
-			};
-			name = Release;
-		};
-		A44ED47A2D7F076700C3448F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 95U4XKU2DW;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = sumi.inputUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = input;
-			};
-			name = Debug;
-		};
-		A44ED47B2D7F076700C3448F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 95U4XKU2DW;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = sumi.inputUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = input;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SumiInput.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SumiInput";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A44ED44A2D7F076600C3448F /* Build configuration list for PBXProject "input" */ = {
+		A44ED44A2D7F076600C3448F /* Build configuration list for PBXProject "SumiInput" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A44ED4712D7F076700C3448F /* Debug */,
@@ -542,7 +454,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A44ED4732D7F076700C3448F /* Build configuration list for PBXNativeTarget "input" */ = {
+		A44ED4732D7F076700C3448F /* Build configuration list for PBXNativeTarget "SumiInput" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A44ED4742D7F076700C3448F /* Debug */,
@@ -551,7 +463,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A44ED4762D7F076700C3448F /* Build configuration list for PBXNativeTarget "inputTests" */ = {
+		A44ED4762D7F076700C3448F /* Build configuration list for PBXNativeTarget "SumiInputTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A44ED4772D7F076700C3448F /* Debug */,
@@ -560,35 +472,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A44ED4792D7F076700C3448F /* Build configuration list for PBXNativeTarget "inputUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A44ED47A2D7F076700C3448F /* Debug */,
-				A44ED47B2D7F076700C3448F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		A48C6CF02D846B3300DD8728 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-collections.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.4;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		A48C6CF12D846C5600DD8728 /* Collections */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A48C6CF02D846B3300DD8728 /* XCRemoteSwiftPackageReference "swift-collections" */;
-			productName = Collections;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A44ED4472D7F076600C3448F /* Project object */;
 }

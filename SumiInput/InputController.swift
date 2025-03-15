@@ -31,7 +31,7 @@ class InputController: IMKInputController {
     
     var state: State {
         didSet {
-            NSLog("InputController: didSet")
+            NSLog("SumiInput InputController didSet")
             
             switch state {
             case .text:
@@ -42,7 +42,7 @@ class InputController: IMKInputController {
                     replacementRange: notFonud)
 
             case .selectDict(let keyDict):
-                NSLog("InputController: didSet .selectDict(\(keyDict))")
+                NSLog("SumiInput InputController didSet .selectDict(\(keyDict))")
 
                 self.client().setMarkedText(
                     NSAttributedString(string: letterKey + keyDict, attributes: self.mark(
@@ -56,7 +56,7 @@ class InputController: IMKInputController {
                 candidates.show()
           
             case .select(let keyDict, let keyWord):
-                NSLog("InputController: toSelect(\(keyDict), \(keyWord))")
+                NSLog("SumiInput InputController toSelect(\(keyDict), \(keyWord))")
                 
                 let nameDict = dicts[keyDict]!.0
                 
@@ -77,7 +77,7 @@ class InputController: IMKInputController {
     let letterKey = "\\"
 
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
-        NSLog("InputController: init!")
+        NSLog("SumiInput InputController init!")
         state = .text
         candidates = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
         super.init(server: server, delegate: delegate, client: inputClient)
@@ -85,7 +85,7 @@ class InputController: IMKInputController {
     
     
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
-        NSLog("InputController: handle \(state), \(event.keyCode), \(event.characters), \(candidates)")
+        NSLog("SumiInput InputController handle \(state), \(event.keyCode), \(event.characters), \(candidates)")
 
         guard let client = sender as? IMKTextInput else {
             return super.handle(event, client: sender);
@@ -170,7 +170,7 @@ class InputController: IMKInputController {
     
     
     override func candidates(_ sender: Any!) -> [Any]! {
-        NSLog("InputController: candidates")
+        NSLog("SumiInput InputController candidates")
         
         if case .selectDict(let keyDict) = state {
             return Array<String>(dicts
@@ -188,18 +188,17 @@ class InputController: IMKInputController {
             case .select(let keyDict, let keyWord) = state,
             let (_, dict) = dicts[keyDict]
         {
-            return Array<String>(
-                dict
-                    .lazy
-                    .filter {
-                        keyWord == "" || $0.key.contains(keyWord) }
-                    .flatMap { (k: String, words: Array<String>) in
-                        words.map { (k, $0) }
-                    }
-                    .sorted(by: {
-                        ($0.0.ranges(of: keyDict).startIndex, $0.0.count, $0.1) <
-                        ($1.0.ranges(of: keyDict).startIndex, $1.0.count, $1.1) })
-                    .map { "\($0.0): \($0.1)" }
+            return Array<String>(dict
+                .lazy
+                .filter {
+                    keyWord == "" || $0.key.contains(keyWord) }
+                .flatMap { (k: String, words: Array<String>) in
+                    words.map { (k, $0) }
+                }
+                .sorted(by: {
+                    ($0.0.ranges(of: keyDict).startIndex, $0.0.count, $0.1) <
+                    ($1.0.ranges(of: keyDict).startIndex, $1.0.count, $1.1) })
+                .map { "\($0.0): \($0.1)" }
             )
         }
 
@@ -208,7 +207,7 @@ class InputController: IMKInputController {
     
     
     override func candidateSelected(_ candidateString: NSAttributedString!) {
-        NSLog("InputController: candidateSelected(\(candidateString))")
+        NSLog("SumiInput InputController candidateSelected(\(candidateString))")
 
         switch state {
         case .text:
@@ -228,7 +227,7 @@ class InputController: IMKInputController {
     }
     
     override func deactivateServer(_ sender: Any!) {
-        NSLog("InputController: deactivateServer")
+        NSLog("SumiInput InputController deactivateServer")
         candidates.hide()
     }
 }
