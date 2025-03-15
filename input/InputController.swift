@@ -27,68 +27,66 @@ enum Key: UInt16 {
 
 @objc(InputController)
 class InputController: IMKInputController {
-    var state = State.text
     var candidates = IMKCandidates()
     
+    var state: State {
+        didSet {
+            NSLog("InputController: didSet")
+            
+            switch state {
+            case .text:
+                candidates.hide()
+                candidates.update()
+                self.client().setMarkedText("",
+                    selectionRange: notFonud,
+                    replacementRange: notFonud)
+
+            case .selectDict(let keyDict):
+                NSLog("InputController: didSet .selectDict(\(keyDict))")
+
+                self.client().setMarkedText(
+                    NSAttributedString(string: letterKey + keyDict, attributes: self.mark(
+                        forStyle: kTSMHiliteSelectedConvertedText,
+                        at: NSMakeRange(NSNotFound, 0)
+                    ) as? [NSAttributedString.Key: Any]),
+                    selectionRange: notFonud,
+                    replacementRange: notFonud)
+                
+                candidates.update()
+                candidates.show()
+          
+            case .select(let keyDict, let keyWord):
+                NSLog("InputController: toSelect(\(keyDict), \(keyWord))")
+                
+                let nameDict = dicts[keyDict]!.0
+                
+                self.client().setMarkedText(
+                    NSAttributedString(string: "[\(nameDict)]\(keyWord)", attributes: self.mark(
+                        forStyle: kTSMHiliteSelectedConvertedText,
+                        at: NSMakeRange(NSNotFound, 0)
+                    ) as? [NSAttributedString.Key: Any]),
+                    selectionRange: notFonud,
+                    replacementRange: notFonud)
+                
+                candidates.update()
+                candidates.show()
+            }
+        }
+    }
+
     let letterKey = "\\"
-    
-    
+
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
+        NSLog("InputController: init!")
+        state = .text
         candidates = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
         super.init(server: server, delegate: delegate, client: inputClient)
     }
     
     
-    func toText() {
-        state = .text
-        candidates.hide()
-        candidates.update()
-        self.client().setMarkedText("",
-            selectionRange: notFonud,
-            replacementRange: notFonud)
-    }
-    
-    
-    func toSelectDict(_ keyDict: String) {
-        state = .selectDict(keyDict)
-        
-        self.client().setMarkedText(
-            NSAttributedString(string: letterKey + keyDict, attributes: self.mark(
-                forStyle: kTSMHiliteSelectedConvertedText,
-                at: NSMakeRange(NSNotFound, 0)
-            ) as? [NSAttributedString.Key: Any]),
-            selectionRange: notFonud,
-            replacementRange: notFonud)
-        
-        candidates.update()
-        candidates.show()
-    }
-    
-    
-    func toSelect(_ keyDict: String, _ keyWord: String) {
-        NSLog("InputController: toSelect: \(keyDict), \(keyWord)")
-        state = .select(keyDict, keyWord)
-                
-        let nameDict = dicts[keyDict]!.0
-        
-        self.client().setMarkedText(
-            NSAttributedString(string: "[\(nameDict)]\(keyWord)", attributes: self.mark(
-                forStyle: kTSMHiliteSelectedConvertedText,
-                at: NSMakeRange(NSNotFound, 0)
-            ) as? [NSAttributedString.Key: Any]),
-            selectionRange: notFonud,
-            replacementRange: notFonud)
-        
-        candidates.update()
-        candidates.show()
-    }
-    
-    
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
-        NSLog("InputController: \(state), \(event.keyCode), \(event.characters), \(candidates)")
+        NSLog("InputController: handle \(state), \(event.keyCode), \(event.characters), \(candidates)")
 
-        candidates.showAnnotation(NSAttributedString("showAnnotation"))
-        
         guard let client = sender as? IMKTextInput else {
             return super.handle(event, client: sender);
         }
@@ -111,22 +109,15 @@ class InputController: IMKInputController {
             }
         }
         
-        // number for select
-        if case .text = state {}
-        else if  ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].contains(event.characters) {
-            candidates.interpretKeyEvents([event])
-            return true
-        }
-        
         // backslash
         if (event.characters == "\\") {
             if case .text = state {
-                toSelectDict("")
+                state = .selectDict("")
                 return true
             }
             else if case .selectDict("") = state {
                 client.insertText("\\", replacementRange: notFonud)
-                toText()
+                state = .text
                 return true
             }
         }
@@ -140,27 +131,27 @@ class InputController: IMKInputController {
             (.selectDict(""), Key.delete.rawValue),
             (.selectDict(""), Key.escape.rawValue)
             :
-            toText()
+            state = .text
             
         case
             (.select(let keyDict, ""), Key.delete.rawValue),
             (.select(let keyDict, ""), Key.escape.rawValue)
             :
-            toSelectDict(keyDict)
+            state = .selectDict(keyDict)
             
             // clear
         case (.selectDict(_), Key.escape.rawValue):
-            toSelectDict("")
+            state = .selectDict("")
             
         case (.select(let keyDict, _), Key.escape.rawValue):
-            toSelect(keyDict, "")
+            state = .select(keyDict, "")
             
             // delete
         case (.selectDict(let keyDict), Key.delete.rawValue):
-            toSelectDict(String(keyDict.dropLast()))
+            state = .selectDict(String(keyDict.dropLast()))
             
         case (.select(let keyDict, let keyWord), Key.delete.rawValue):
-            toSelect(keyDict, String(keyWord.dropLast()))
+            state = .select(keyDict, String(keyWord.dropLast()))
             
             // input
         case (.text, _):
@@ -168,10 +159,10 @@ class InputController: IMKInputController {
             
         case (.selectDict(let keyDict), _):
             let keyDictNew = String(keyDict + (event.characters ?? ""))
-            toSelectDict(keyDictNew)
+            state = .selectDict(keyDictNew)
             
         case (.select(let keyDict, let keyWord), _):
-            toSelect(keyDict, keyWord + (event.characters ?? ""))
+            state = .select(keyDict, keyWord + (event.characters ?? ""))
         }
         
         return true
@@ -179,26 +170,36 @@ class InputController: IMKInputController {
     
     
     override func candidates(_ sender: Any!) -> [Any]! {
+        NSLog("InputController: candidates")
+        
         if case .selectDict(let keyDict) = state {
-            return dicts
-                .filter({ (k, _) in
-                    keyDict == "" || k.contains(keyDict) })
-                .map({ (k, v) in
-                    "\(k): \(v.0)"
-                })
+            return Array<String>(dicts
+                .lazy
+                .filter {
+                    keyDict == "" || $0.key.contains(keyDict) }
+                .sorted(by: {
+                    ($0.key.ranges(of: keyDict).startIndex, $0.key.count, $0.value.0) <
+                    ($1.key.ranges(of: keyDict).startIndex, $1.key.count, $1.value.0) })
+                .map {
+                    "\($0.key): \($0.value.0)" }
+            )
         }
         else if
             case .select(let keyDict, let keyWord) = state,
             let (_, dict) = dicts[keyDict]
         {
-            return Array(
+            return Array<String>(
                 dict
-                    .filter({ (k, _) in
-                        keyWord == "" || k.contains(keyWord) })
-                    .map({ (k, words) in
-                        words.map({ w in
-                            "\(k): \(w)" }) })
-                    .joined()
+                    .lazy
+                    .filter {
+                        keyWord == "" || $0.key.contains(keyWord) }
+                    .flatMap { (k: String, words: Array<String>) in
+                        words.map { (k, $0) }
+                    }
+                    .sorted(by: {
+                        ($0.0.ranges(of: keyDict).startIndex, $0.0.count, $0.1) <
+                        ($1.0.ranges(of: keyDict).startIndex, $1.0.count, $1.1) })
+                    .map { "\($0.0): \($0.1)" }
             )
         }
 
@@ -207,24 +208,27 @@ class InputController: IMKInputController {
     
     
     override func candidateSelected(_ candidateString: NSAttributedString!) {
+        NSLog("InputController: candidateSelected(\(candidateString))")
+
         switch state {
         case .text:
             fatalError("should not select in text mode")
             
         case .selectDict(_):
-            toSelect(
+            state = .select(
                 String(candidateString.string.split(separator: ": ", omittingEmptySubsequences: false)[0]),
                 "")
             
-        case .select(_, _):
+        case .select(let keyDict, _):
             self.client().insertText(
                 String(candidateString.string.split(separator: ": ", omittingEmptySubsequences: false)[1]),
                 replacementRange: notFonud)
-            toText()
+            state = .select(keyDict, "")
         }
     }
     
     override func deactivateServer(_ sender: Any!) {
+        NSLog("InputController: deactivateServer")
         candidates.hide()
     }
 }
