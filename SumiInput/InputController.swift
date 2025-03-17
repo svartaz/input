@@ -103,12 +103,12 @@ class InputController: IMKInputController {
                 return super.handle(event, client: sender)
 
             case .context(let context):
-                client.insertText(context, replacementRange: notFound)
+                client.insertText(letterKey + context, replacementRange: notFound)
                 state = .text
                 return true
 
             case .key(let context, let key):
-                client.insertText(letterKey + key, replacementRange: notFound)
+                client.insertText(key, replacementRange: notFound)
                 state = .key(context, "")
                 return true
 
