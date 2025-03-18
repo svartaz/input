@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "make": "node src/deva && node src/hang && node src/hanz && node src/yue"
+  }
+}

@@ -42,7 +42,7 @@ class InputController: IMKInputController {
             case .context(let context):
                 self.client().setMarkedText(
                     NSAttributedString(
-                        string: letterKey + context,
+                        string: prefix + context,
                         attributes: self.mark(
                             forStyle: kTSMHiliteSelectedConvertedText,
                             at: NSMakeRange(NSNotFound, 0)
@@ -72,7 +72,7 @@ class InputController: IMKInputController {
         }
     }
 
-    let letterKey = "\\"
+    let prefix = "\\"
 
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!)
     {
@@ -104,7 +104,7 @@ class InputController: IMKInputController {
 
             case .context(let context):
                 client.insertText(
-                    letterKey + context, replacementRange: notFound)
+                    prefix + context, replacementRange: notFound)
                 state = .text
 
             case .key(let context, let key):
@@ -148,19 +148,16 @@ class InputController: IMKInputController {
             }
 
         default:
-            if event.characters == "\\" {
-                // backslash
-                if case .text = state {
-                    state = .context("")
-                }
-                else if case .context("") = state {
-                    client.insertText("\\", replacementRange: notFound)
-                    state = .text
-                }
+            if event.characters == prefix, case .text = state {
+                state = .context("")
+            }
+            else if event.characters == prefix, case .context("") = state {
+                client.insertText("\\", replacementRange: notFound)
+                state = .text
             }
             else {
                 // input
-                switch state {
+                    switch state {
                 case .text:
                     client.insertText(event.characters, replacementRange: notFound)
 
