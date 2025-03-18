@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A4AFF3AC2D8584E0006600C5 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = A4AFF3AB2D8584E0006600C5 /* README.md */; };
+		A4ED3FC42D899D7800CEE9C9 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = A4ED3FC32D899D7800CEE9C9 /* Collections */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4ED3FC42D899D7800CEE9C9 /* Collections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +105,7 @@
 			);
 			name = SumiInput;
 			packageProductDependencies = (
+				A4ED3FC32D899D7800CEE9C9 /* Collections */,
 			);
 			productName = input;
 			productReference = A44ED44F2D7F076600C3448F /* SumiInput.app */;
@@ -157,6 +160,7 @@
 			mainGroup = A44ED4462D7F076600C3448F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				A4ED3FC22D899D7800CEE9C9 /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A44ED4502D7F076600C3448F /* Products */;
@@ -475,6 +479,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A4ED3FC22D899D7800CEE9C9 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A4ED3FC32D899D7800CEE9C9 /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A4ED3FC22D899D7800CEE9C9 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A44ED4472D7F076600C3448F /* Project object */;
 }

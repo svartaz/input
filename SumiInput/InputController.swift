@@ -34,19 +34,14 @@ class InputController: IMKInputController {
             case .text:
                 candidates.hide()
                 candidates.update()
-                self.client().setMarkedText(
+                client().setMarkedText(
                     "",
                     selectionRange: notFound,
                     replacementRange: notFound)
 
             case .context(let context):
-                self.client().setMarkedText(
-                    NSAttributedString(
-                        string: prefix + context,
-                        attributes: self.mark(
-                            forStyle: kTSMHiliteSelectedConvertedText,
-                            at: NSMakeRange(NSNotFound, 0)
-                        ) as? [NSAttributedString.Key: Any]),
+                client().setMarkedText(
+                    enterContext + context,
                     selectionRange: notFound,
                     replacementRange: notFound)
 
@@ -54,15 +49,8 @@ class InputController: IMKInputController {
                 candidates.show()
 
             case .key(let context, let key):
-                let name = dicts[context]!.0
-
-                self.client().setMarkedText(
-                    NSAttributedString(
-                        string: "[\(name)]\(key)",
-                        attributes: self.mark(
-                            forStyle: kTSMHiliteSelectedConvertedText,
-                            at: NSMakeRange(NSNotFound, 0)
-                        ) as? [NSAttributedString.Key: Any]),
+                client().setMarkedText(
+                    "[\(dicts[context]!.0)]\(key)",
                     selectionRange: notFound,
                     replacementRange: notFound)
 
@@ -72,7 +60,11 @@ class InputController: IMKInputController {
         }
     }
 
-    let prefix = "\\"
+    let enterContext = "\\"
+
+    let joinSubkeys = "·"
+    
+    let joinKeyValue = " ▸ "
 
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!)
     {
@@ -80,6 +72,7 @@ class InputController: IMKInputController {
         state = .text
         candidates = IMKCandidates(
             server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
+
         super.init(server: server, delegate: delegate, client: inputClient)
     }
 
@@ -104,7 +97,7 @@ class InputController: IMKInputController {
 
             case .context(let context):
                 client.insertText(
-                    prefix + context, replacementRange: notFound)
+                    enterContext + context, replacementRange: notFound)
                 state = .text
 
             case .key(let context, let key):
@@ -135,31 +128,31 @@ class InputController: IMKInputController {
             case .context(let context):
                 state = .context(String(context.dropLast()))
 
-            case .key(_, ""):
-                // FIXME: delete a letter to the left of buffer
-                NSLog("range=\(client.markedRange())")
+            case .key(let context, ""):
+                NSLog("delete in context")
+                // delete a letter to the left of buffer
+                // FIXME replacementRange is ignored
                 client.insertText(
                     "",
                     replacementRange: NSRange(
                         location: client.markedRange().location - 1, length: 1))
-                
+
             case .key(let context, let key):
                 state = .key(context, String(key.dropLast()))
             }
 
         default:
-            if event.characters == prefix, case .text = state {
+            if event.characters == enterContext, case .text = state {
                 state = .context("")
-            }
-            else if event.characters == prefix, case .context("") = state {
+            } else if event.characters == enterContext, case .context("") = state {
                 client.insertText("\\", replacementRange: notFound)
                 state = .text
-            }
-            else {
+            } else {
                 // input
-                    switch state {
+                switch state {
                 case .text:
-                    client.insertText(event.characters, replacementRange: notFound)
+                    client.insertText(
+                        event.characters, replacementRange: notFound)
 
                 case .context(let context):
                     let contextNew = String(context + (event.characters ?? ""))
@@ -189,48 +182,85 @@ class InputController: IMKInputController {
     }
 
     func filterContexts(_ context: String) -> [String] {
-        let unsorted =
-            dicts
+        dicts
             .compactMap {
-                let ranges = $0.key.ranges(of: context)
+                if context == "" {
+                    return ($0.key.startIndex, $0.key, $0.value.0)
+                } else if let range = $0.key.range(of: context) {
+                    return (range.lowerBound, $0.key, $0.value.0)
+                } else {
+                    return nil
+                }
+            }
+            .sorted(by: { (a, b) in
+                (a.0, a.1.count, a.1) < (b.0, b.1.count, b.1)
+            })
+            .map { $0.1 + joinKeyValue + $0.2 }
+    }
 
-                if context == "" || !ranges.isEmpty {
-                    return (ranges.first!.lowerBound, $0.key, $0.value.0)
+    func matchKeys(
+        _ dict: [String: [String]],
+        _ subkeys: [String],
+        _ subwords: [String],
+        _ key: String
+    ) -> ([String], [String], String, [(String, String)]) {
+        // check words of shorter or equal key (first one)
+        for n in 0..<key.count {
+            let keyFirst = String(key.dropLast(n))
+
+            if let word = dict[keyFirst]?.sorted().first {
+                return matchKeys(
+                    dict, subkeys + [keyFirst], subwords + [word],
+                    String(key.dropFirst(key.count - n)))
+            }
+        }
+
+        // check words of longer key (many)
+        let filtered =
+            dict.compactMap {
+                if key == "" {
+                    return ($0.key.startIndex, $0.key, $0.value)
+                } else if let index = $0.key.range(of: key)?.lowerBound {
+                    return (index, $0.key, $0.value)
                 } else {
                     return nil
                 }
             }
 
-        return
-            unsorted
-            .sorted(by: { (a, b) in
-                (a.0, a.1.count, a.2) < (b.0, b.1.count, b.2)
-            })
-            .map { $0.1 + " > " + $0.2 }
+        /* sort by
+         * - earlier match
+         * - shorter key (higher match rate)
+         * - word
+         */
+        let sorted =
+            filtered.flatMap {
+                let (index, k, words) = $0
+                return
+                    words
+                    .map { w in (index, k, w) }
+            }
+            .sorted { (a, b) in
+                (a.0, a.1.count, a.2) < (
+                    b.0, b.1.count, b.2
+                )
+            }
+            .map { ($0.1, $0.2) }
+
+        return (subkeys, subwords, key, sorted)
     }
 
     func filterKeys(_ dict: [String: [String]], _ key: String) -> [String] {
-        let unsorted =
-            dict
-            .flatMap {
-                let (k, words) = $0
-                let ranges = k.ranges(of: key)
+        let (subkeys, subwords, keyRemain, sorted) = matchKeys(
+            dict, [], [], key)
 
-                if key == "" || !ranges.isEmpty {
-                    return words.map { (ranges.first!.lowerBound, k, $0) }
-                } else {
-                    return []
-                }
-            }
+        let prepended =
+            !subkeys.isEmpty && (keyRemain.isEmpty || sorted.isEmpty)
+            ? [("", "")] : []
 
-        let maybeSorted =
-            unsorted.count < 4000
-            ? unsorted.sorted(by: { (a, b) in
-                (a.0, a.1.count, a.2) < (b.0, b.1.count, b.2)
-            })
-            : unsorted
-
-        return maybeSorted.map { $0.2 + " < " + $0.1 }
+        return (prepended + sorted).map {
+            (subkeys + [$0.0]).joined(separator: joinSubkeys) + joinKeyValue
+                + subwords.joined() + $0.1
+        }
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString!) {
@@ -241,14 +271,22 @@ class InputController: IMKInputController {
         case .context(_):
             NSLog(candidateString.string)
             state = .key(
-                fromCandidate(candidateString.string, " > ").0,
+                fromCandidate(candidateString.string, joinKeyValue).0,
                 "")
 
-        case .key(let context, _):
+        case .key(let context, let key):
+            let (keySelected, word) = fromCandidate(
+                candidateString.string, joinKeyValue)
             self.client().insertText(
-                fromCandidate(candidateString.string, " < ").0,
+                word,
                 replacementRange: notFound)
-            state = .key(context, "")
+
+            state = .key(
+                context,
+                key.replacingOccurrences(
+                    of: keySelected.replacingOccurrences(of: joinSubkeys, with: ""),
+                    with: "")
+            )
         }
     }
 
