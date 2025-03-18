@@ -50,6 +50,7 @@ let dicts: Dicts = {
                 "latn", // 0000
                 "grek", // 0370
                 "cyrl", // 0400
+                "armn", // 0530
                 "arab", // 0600
                 "deva", // 0900
                 "tibt", // 0F00
