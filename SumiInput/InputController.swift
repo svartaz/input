@@ -50,7 +50,7 @@ class InputController: IMKInputController {
 
             case .key(let context, let key):
                 client().setMarkedText(
-                    "[\(dicts[context]!.0)]\(key)",
+                    "⦗\(dicts[context]!.0)⦘\(key)",
                     selectionRange: notFound,
                     replacementRange: notFound)
 
@@ -63,7 +63,7 @@ class InputController: IMKInputController {
     let enterContext = "\\"
 
     let joinSubkeys = "·"
-    
+
     let joinKeyValue = " ▸ "
 
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!)
@@ -128,10 +128,10 @@ class InputController: IMKInputController {
             case .context(let context):
                 state = .context(String(context.dropLast()))
 
-            case .key(let context, ""):
+            case .key(_, ""):
                 NSLog("delete in context")
                 // delete a letter to the left of buffer
-                // FIXME replacementRange is ignored
+                // FIXME: replacementRange is ignored
                 client.insertText(
                     "",
                     replacementRange: NSRange(
@@ -144,7 +144,9 @@ class InputController: IMKInputController {
         default:
             if event.characters == enterContext, case .text = state {
                 state = .context("")
-            } else if event.characters == enterContext, case .context("") = state {
+            } else if event.characters == enterContext,
+                case .context("") = state
+            {
                 client.insertText("\\", replacementRange: notFound)
                 state = .text
             } else {
@@ -284,7 +286,8 @@ class InputController: IMKInputController {
             state = .key(
                 context,
                 key.replacingOccurrences(
-                    of: keySelected.replacingOccurrences(of: joinSubkeys, with: ""),
+                    of: keySelected.replacingOccurrences(
+                        of: joinSubkeys, with: ""),
                     with: "")
             )
         }

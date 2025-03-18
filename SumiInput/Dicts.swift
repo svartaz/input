@@ -47,15 +47,16 @@ let dicts: Dicts = {
     let dictsFetched: Dicts =
         Dictionary(
             uniqueKeysWithValues: [
-                "latn",
-                "grek",
-                "cyrl",
-                "arab",
-                "deva",
-                "hang",
-                "hrkt",
-                "hanz",
-                "yue",
+                "latn", // 0000
+                "grek", // 0370
+                "cyrl", // 0400
+                "arab", // 0600
+                "deva", // 0900
+                "tibt", // 0F00
+                "hang", // 1100
+                "hrkt", // 3040
+                "hanz", // 4E00
+                "yue",  //
             ]
             .compactMap { context in
                 fetch(context).map { (context, $0) }
