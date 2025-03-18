@@ -40,8 +40,6 @@ class InputController: IMKInputController {
                     replacementRange: notFound)
 
             case .context(let context):
-                NSLog("InputController didSet .selectDict(\(context))")
-
                 self.client().setMarkedText(
                     NSAttributedString(
                         string: letterKey + context,
@@ -56,13 +54,11 @@ class InputController: IMKInputController {
                 candidates.show()
 
             case .key(let context, let key):
-                NSLog("InputController toSelect(\(context), \(key))")
-
-                let nameDict = dicts[context]!.0
+                let name = dicts[context]!.0
 
                 self.client().setMarkedText(
                     NSAttributedString(
-                        string: "[\(nameDict)]\(key)",
+                        string: "[\(name)]\(key)",
                         attributes: self.mark(
                             forStyle: kTSMHiliteSelectedConvertedText,
                             at: NSMakeRange(NSNotFound, 0)
@@ -89,7 +85,7 @@ class InputController: IMKInputController {
 
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
         NSLog(
-            "InputController handle \(state), \(event.keyCode), \(event.characters), \(candidates)"
+            "InputController handle state=\(state) keyCode=\(event.keyCode) characters=\(event.characters)"
         )
 
         guard let client = sender as? IMKTextInput else {
@@ -97,21 +93,23 @@ class InputController: IMKInputController {
         }
 
         switch event.keyCode {
+        case Key.escape.rawValue:
+            // escape key resets everything
+            state = .text
+
         case Key.tab.rawValue:
             switch state {
             case .text:
                 return super.handle(event, client: sender)
 
             case .context(let context):
-                client.insertText(letterKey + context, replacementRange: notFound)
+                client.insertText(
+                    letterKey + context, replacementRange: notFound)
                 state = .text
-                return true
 
             case .key(let context, let key):
                 client.insertText(key, replacementRange: notFound)
                 state = .key(context, "")
-                return true
-
             }
 
         case Key.left.rawValue,
@@ -124,69 +122,59 @@ class InputController: IMKInputController {
                 return super.handle(event, client: sender)
             default:
                 candidates.interpretKeyEvents([event])
-                return true
             }
-        default:
-            break
-        }
 
-        // backslash
-        if event.characters == "\\" {
-            if case .text = state {
-                state = .context("")
-                return true
-            } else if case .context("") = state {
-                client.insertText("\\", replacementRange: notFound)
+        case Key.delete.rawValue:
+            switch state {
+            case .text:
+                return super.handle(event, client: sender)
+
+            case .context(""):
                 state = .text
-                return true
+
+            case .context(let context):
+                state = .context(String(context.dropLast()))
+
+            case .key(_, ""):
+                // FIXME: delete a letter to the left of buffer
+                NSLog("range=\(client.markedRange())")
+                client.insertText(
+                    "",
+                    replacementRange: NSRange(
+                        location: client.markedRange().location - 1, length: 1))
+                
+            case .key(let context, let key):
+                state = .key(context, String(key.dropLast()))
             }
-        }
 
-        switch (state, event.keyCode) {
-        case (.text, Key.delete.rawValue):
-            return super.handle(event, client: sender)
+        default:
+            if event.characters == "\\" {
+                // backslash
+                if case .text = state {
+                    state = .context("")
+                }
+                else if case .context("") = state {
+                    client.insertText("\\", replacementRange: notFound)
+                    state = .text
+                }
+            }
+            else {
+                // input
+                switch state {
+                case .text:
+                    client.insertText(event.characters, replacementRange: notFound)
 
-        // back
-        case (_, Key.escape.rawValue),
-            (.context(""), Key.delete.rawValue):
-            state = .text
+                case .context(let context):
+                    let contextNew = String(context + (event.characters ?? ""))
+                    state = .context(contextNew)
 
-        case (.key(let context, ""), Key.delete.rawValue):
-            state = .context(context)
-
-        // delete
-        case (.context(let context), Key.delete.rawValue):
-            state = .context(String(context.dropLast()))
-
-        case (.key(let context, let key), Key.delete.rawValue):
-            state = .key(context, String(key.dropLast()))
-
-        // input
-        case (.text, _):
-            client.insertText(event.characters, replacementRange: notFound)
-
-        case (.context(let context), _):
-            let contextNew = String(context + (event.characters ?? ""))
-            state = .context(contextNew)
-
-        case (.key(let context, let key), _):
-            state = .key(context, key + (event.characters ?? ""))
+                case .key(let context, let key):
+                    state = .key(context, key + (event.characters ?? ""))
+                }
+            }
         }
 
         return true
-    }
-
-    func toCandidate(_ key: String, _ word: String) -> String {
-        return key + ": " + word
-    }
-
-    func fromCandidate(_ candidate: String) -> (String, String) {
-        let keyWithWord = candidate.unicodeScalars.split(
-            separator: ": ".unicodeScalars,
-            omittingEmptySubsequences: false
-        ).map { String($0) }
-
-        return (keyWithWord[0], keyWithWord[1])
     }
 
     override func candidates(_ sender: Any!) -> [Any]! {
@@ -221,7 +209,7 @@ class InputController: IMKInputController {
             .sorted(by: { (a, b) in
                 (a.0, a.1.count, a.2) < (b.0, b.1.count, b.2)
             })
-            .map { toCandidate($0.1, $0.2) }
+            .map { $0.1 + " > " + $0.2 }
     }
 
     func filterKeys(_ dict: [String: [String]], _ key: String) -> [String] {
@@ -245,7 +233,7 @@ class InputController: IMKInputController {
             })
             : unsorted
 
-        return maybeSorted.map { toCandidate($0.1, $0.2) }
+        return maybeSorted.map { $0.2 + " < " + $0.1 }
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString!) {
@@ -256,16 +244,26 @@ class InputController: IMKInputController {
         case .context(_):
             NSLog(candidateString.string)
             state = .key(
-                fromCandidate(candidateString.string).0,
+                fromCandidate(candidateString.string, " > ").0,
                 "")
 
         case .key(let context, _):
-            NSLog("\(candidateString.string.components(separatedBy: ": "))")
             self.client().insertText(
-                fromCandidate(candidateString.string).1,
+                fromCandidate(candidateString.string, " < ").0,
                 replacementRange: notFound)
             state = .key(context, "")
         }
+    }
+
+    func fromCandidate(_ candidate: String, _ separator: String) -> (
+        String, String
+    ) {
+        let keyWithWord = candidate.unicodeScalars.split(
+            separator: separator.unicodeScalars,
+            omittingEmptySubsequences: false
+        ).map { String($0) }
+
+        return (keyWithWord[0], keyWithWord[1])
     }
 
     override func deactivateServer(_ sender: Any!) {

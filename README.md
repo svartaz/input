@@ -2,15 +2,18 @@
 
 ## generate json
 
-```
-node make-json/src/hanz
-node make-json/src/yue
+```sh
+cd make-json
+node src/hang
+node src/hanz
+node src/latn
+node src/yue
 ```
 
 ## run
 
-```
-pkill SumiInput \
-&& rm -rf '~/Library/Input Methods/SumiInput.app' \
-&& cp -r '~/Library/Developer/Xcode/DerivedData/SumiInput-<random string>/Build/Products/Debug/SumiInput.app' '~/Library/Input Methods/SumiInput.app'
+```sh
+pkill SumiInput
+rm -rf '~/Library/Input Methods/SumiInput.app'
+cp -r '~/Library/Developer/Xcode/DerivedData/SumiInput-<random string>/Build/Products/Debug/SumiInput.app' '~/Library/Input Methods/SumiInput.app'
 ```
