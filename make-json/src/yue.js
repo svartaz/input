@@ -74,14 +74,8 @@ for (const line of fs
     [/$/, ["", "q", "s", ""][tone]],
   ]);
 
-  if (hanz in scToTcs) {
-    console.log("simplified", hanz);
-    continue;
-  }
-  if (!hanzInRange(hanz)) {
-    console.log("uncommon", hanz);
-    continue;
-  }
+  if (hanz in scToTcs) continue;
+  if (!hanzInRange(hanz)) continue;
 
   if (dict[latn]) dict[latn].push(hanz);
   else dict[latn] = [hanz];

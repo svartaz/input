@@ -32,7 +32,7 @@ exports.rangesCodeHanz = [
   [0x3400, 0x4dbf],
 
   // CJK Unified Ideographs Extension B
-  [0x20000, 0x2a6e0],
+  //[0x20000, 0x2a6e0],
 ];
 
 exports.hanzInRange = (hanzOrCode) => {

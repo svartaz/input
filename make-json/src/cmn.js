@@ -1,7 +1,7 @@
 // https://www.unicode.org/Public/UNIDATA/Unihan.zip
 
 const fs = require("fs");
-const { replaceEach, scToTcs } = require("./utility.js");
+const { replaceEach, scToTcs, hanzInRange } = require("./utility.js");
 
 const dict = {};
 
@@ -73,6 +73,7 @@ for (const line of fs
     ]);
 
     if (hanz in scToTcs) continue;
+    if (!hanzInRange(hanz)) continue;
 
     if (dict[latn]) dict[latn].push(hanz);
     else dict[latn] = [hanz];

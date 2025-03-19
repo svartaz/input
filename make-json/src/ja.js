@@ -274,12 +274,10 @@ for (const line of fs
     if (row[1] !== "kJapaneseOn") continue;
 
     const hanz = String.fromCharCode(parseInt(row[0].replace("U+", "0x")));
+    if (!hanzInRange(hanz)) continue;
+    if (hanz in scToTcs) continue;
     if (!hanzInRange(hanz)) {
       console.log("uncommon", hanz);
-      continue;
-    }
-    if (hanz in scToTcs) {
-      //console.log("simplified", hanz, latn);
       continue;
     }
 
@@ -302,18 +300,20 @@ for (const line of fs
         [/(?<=[aiueo][ktf])[iu]$/g, ""],
       ]);
 
+      if (hanz === "出") console.log(hanz, latn);
+
       if (/[aiueo][^aiueo][aiueo]/.test(latn)) {
-        console.log("two vowels", hanz, latn);
+        //console.log("two vowels", hanz, latn);
         continue;
       }
 
       if (/[auieo]{3,}/.test(latn)) {
-        console.log("three vowel", hanz, latn);
+        //console.log("three vowel", hanz, latn);
         continue;
       }
 
-      if (/aa|ii|ee|oo/.test(latn)) {
-        console.log("long vowel", hanz, latn);
+      if (/a[aeo]|i[aieo]|u[aeo]|e[aeo]|o[aeo]/.test(latn)) {
+        //console.log("hiatus", hanz, latn);
         continue;
       }
 
