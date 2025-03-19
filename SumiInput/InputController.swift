@@ -89,22 +89,22 @@ class InputController: IMKInputController {
         case Key.escape.rawValue:
             // escape key resets everything
             state = .text
-            
+
         case Key.tab.rawValue:
             switch state {
             case .text:
                 return super.handle(event, client: sender)
-                
+
             case .context(let context):
                 client.insertText(
                     enterContext + context, replacementRange: notFound)
                 state = .text
-                
+
             case .key(let context, let key):
                 client.insertText(key, replacementRange: notFound)
                 state = .key(context, "")
             }
-            
+
         case Key.left.rawValue,
             Key.right.rawValue,
             Key.down.rawValue,
@@ -115,7 +115,7 @@ class InputController: IMKInputController {
             default:
                 candidates.interpretKeyEvents([event])
             }
-            
+
         case Key.return_.rawValue:
             switch state {
             case .text, .key(_, ""):
@@ -216,7 +216,7 @@ class InputController: IMKInputController {
         if key == "" {
             return []
         }
-                
+
         // seek for exact key and superkeys
         let filtered: [(String.Index, String, [String])] =
             dict
@@ -229,19 +229,21 @@ class InputController: IMKInputController {
                     return nil
                 }
             }
-        
-         /* sort by
-          * - earlier match
-          * - shorter key (higher match rate)
-          * - word
-          */
+
+        /* sort by
+         * - earlier match
+         * - shorter key (higher match rate)
+         * - word
+         */
         if !filtered.isEmpty {
-            return filtered
+            return
+                filtered
                 .flatMap { a in a.2.map { w in (a.0, a.1, w) } }
-                .sorted { a, b in (a.0, a.1.count, a.2) < (b.0, b.1.count, a.2) }
+                .sorted { a, b in (a.0, a.1.count, a.2) < (b.0, b.1.count, a.2)
+                }
                 .map { ($0.1, $0.2) }
         }
-            
+
         // split into subkeys
         // FIXME: too procedural
         var subkeys: [String] = []
@@ -259,16 +261,20 @@ class InputController: IMKInputController {
         }
 
         // check words of longer key
-        return [(
-            subkeys.joined(separator: joinSubkeys),
-            subkeys
-                .map { subkey in dict[subkey]!.sorted().first! }
-                .joined(separator: "")
-         )]
+        return [
+            (
+                subkeys.joined(separator: joinSubkeys),
+                subkeys
+                    .map { subkey in dict[subkey]!.sorted().first! }
+                    .joined(separator: "")
+            )
+        ]
     }
 
     func filterKeys(_ dict: [String: [String]], _ key: String) -> [String] {
-        return matchKeys(dict, key).map { $0.0.replacingOccurrences(of: " ", with: "␣") + joinKeyValue + $0.1 }
+        return matchKeys(dict, key).map {
+            $0.0.replacingOccurrences(of: " ", with: "␣") + joinKeyValue + $0.1
+        }
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString!) {
@@ -307,7 +313,10 @@ class InputController: IMKInputController {
             omittingEmptySubsequences: false
         ).map { String($0) }
 
-        return (keyWithWord[0].replacingOccurrences(of: "␣", with: " "), keyWithWord[1])
+        return (
+            keyWithWord[0].replacingOccurrences(of: "␣", with: " "),
+            keyWithWord[1]
+        )
     }
 
     override func deactivateServer(_ sender: Any!) {

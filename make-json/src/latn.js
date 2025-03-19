@@ -1288,6 +1288,6 @@ require("fs").writeFileSync(
       }),
     },
     null,
-    2
-  )
+    2,
+  ),
 );

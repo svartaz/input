@@ -399,7 +399,7 @@ for (let unicode = 0xac00; unicode < 0xd7a4; unicode++) {
     .reduce(
       (acc, l, i) =>
         acc.replace(new RegExp(String.fromCharCode(0x1100 + i), "g"), l),
-      hang.normalize("NFKD")
+      hang.normalize("NFKD"),
     )
     .replace(/^'-/g, "")
     .replace(/-/g, "");
@@ -409,5 +409,5 @@ for (let unicode = 0xac00; unicode < 0xd7a4; unicode++) {
 
 require("fs").writeFileSync(
   __dirname + `/../../SumiInput/dicts.bundle/hang.json`,
-  JSON.stringify({ name: "hangul", dict }, null, 2)
+  JSON.stringify({ name: "hangul", dict }, null, 2),
 );

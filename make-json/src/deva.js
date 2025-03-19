@@ -128,6 +128,6 @@ require("fs").writeFileSync(
       dict: valueToSingleton({ ...dict, ...dictComposed }),
     },
     null,
-    2
-  )
+    2,
+  ),
 );

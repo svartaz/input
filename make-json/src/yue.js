@@ -18,10 +18,10 @@ for (const line of fs
   const tone = /[ktp]$/.test(latnOld)
     ? 3
     : [1, 4].includes(toneOld)
-    ? 0
-    : [2, 5].includes(toneOld)
-    ? 1
-    : 2;
+      ? 0
+      : [2, 5].includes(toneOld)
+        ? 1
+        : 2;
 
   const latn = replaceEach(latnOld, [
     [/^p/, "px"],
@@ -83,5 +83,5 @@ for (const line of fs
 
 fs.writeFileSync(
   __dirname + "/../../SumiInput/dicts.bundle/yue.json",
-  JSON.stringify({ name: "cantonese", dict }, null, 2)
+  JSON.stringify({ name: "cantonese", dict }, null, 2),
 );

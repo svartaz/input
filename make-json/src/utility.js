@@ -9,7 +9,7 @@ exports.valueToSingleton = (o) =>
 exports.scToTcs = Object.fromEntries(
   fs
     .readFileSync(
-      __dirname + "/../../submodules/unihan-database/kTraditionalVariant.txt"
+      __dirname + "/../../submodules/unihan-database/kTraditionalVariant.txt",
     )
     .toString()
     .trim()
@@ -21,7 +21,7 @@ exports.scToTcs = Object.fromEntries(
         .split(" ")
         .map((u) => String.fromCharCode(Number(u.replace("U+", "0x"))));
       return [sc, tcs];
-    })
+    }),
 );
 
 exports.rangesCodeHanz = [
@@ -40,6 +40,6 @@ exports.hanzInRange = (hanzOrCode) => {
     typeof hanzOrCode === "string" ? hanzOrCode.codePointAt(0) : hanzOrCode;
 
   return this.rangesCodeHanz.some(
-    ([from, until]) => from <= code && code < until
+    ([from, until]) => from <= code && code < until,
   );
 };

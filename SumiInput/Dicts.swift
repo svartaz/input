@@ -9,9 +9,9 @@ let dicts: Dicts = {
         let name: String
         let dict: [String: [String]]
     }
-    
+
     func fetch(_ context: String) -> Dicts.Value? {
-        
+
         if let url = Bundle.main.url(
             forResource: "dicts.bundle/\(context)", withExtension: "json"),
             let dictNamed = try? JSONDecoder().decode(
@@ -32,8 +32,7 @@ let dicts: Dicts = {
             uniqueKeysWithValues:
                 unicodes.compactMap {
                     UnicodeScalar($0).flatMap { us in
-                        (us.properties.nameAlias ?? us.properties.name).map
-                        {
+                        (us.properties.nameAlias ?? us.properties.name).map {
                             name in
                             (
                                 name.lowercased(),
@@ -47,15 +46,15 @@ let dicts: Dicts = {
     let dictsFetched: Dicts =
         Dictionary(
             uniqueKeysWithValues: [
-                "latn", // 0000
-                "grek", // 0370
-                "cyrl", // 0400
-                "armn", // 0530
-                "arab", // 0600
-                "deva", // 0900
+                "latn",  // 0000
+                "grek",  // 0370
+                "cyrl",  // 0400
+                "armn",  // 0530
+                "arab",  // 0600
+                "deva",  // 0900
                 //"tibt", // 0F00
-                "hang", // 1100
-                "hanz", // 4E00
+                "hang",  // 1100
+                "hanz",  // 4E00
                 "ja",
                 "cmn",
                 "yue",

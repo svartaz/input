@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { replaceEach } = require("./util");
+const { replaceEach } = require("./utility");
 
 const data = fs
   .readFileSync(__dirname + "/../../submodules/Zyevio/隋語廣韻全字表.csv")
@@ -50,5 +50,5 @@ for (const line of data) {
 
 fs.writeFileSync(
   __dirname + "/../../SumiInput/dicts.bundle/hanz.json",
-  JSON.stringify({ name: "chinese character", dict }, null, 2)
+  JSON.stringify({ name: "chinese character", dict }, null, 2),
 );
