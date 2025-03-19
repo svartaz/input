@@ -4,3 +4,6 @@
 [submodule "submodules/Zyevio"]
 	path = submodules/Zyevio
 	url = https://github.com/Magnezone462/Zyevio.git
+[submodule "submodules/unihan-database"]
+	path = submodules/unihan-database
+	url = https://github.com/unicode-org/unihan-database

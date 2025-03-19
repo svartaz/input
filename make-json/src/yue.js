@@ -1,18 +1,17 @@
 const fs = require("fs");
-const { replaceEach } = require("./util.js");
+const { replaceEach, scToTcs } = require("./util.js");
 
 const dict = {};
 
 for (const line of fs
-  .readFileSync(__dirname + "/../../submodules/jyutping-table/list.tsv")
+  .readFileSync(__dirname + "/../../submodules/unihan-database/kCantonese.txt")
   .toString()
   .trim()
-  .split("\n")
-  .slice(1)) {
+  .split("\n")) {
   const row = line.split("\t");
-  const hanz = row[0];
+  const hanz = row[0].split(" ")[1];
   const latnOld = row[2].replace(/\d$/, "");
-  const toneOld = parseInt(row[5]);
+  const toneOld = parseInt(row[2].slice(-1));
 
   if (latnOld === "" || isNaN(toneOld)) continue;
 
@@ -73,8 +72,9 @@ for (const line of fs
     [/$/, ["", "q", "s", ""][tone]],
   ]);
 
-  if (dict[latn]) dict[latn].push(hanz);
-  else dict[latn] = [hanz];
+  if (!(hanz in scToTcs))
+    if (dict[latn]) dict[latn].push(hanz);
+    else dict[latn] = [hanz];
 }
 
 fs.writeFileSync(
