@@ -216,13 +216,8 @@ class InputController: IMKInputController {
         if key == "" {
             return []
         }
-        
-        // exact key
-        if let words = dict[key] {
-            return words.map { (key, $0) }
-        }
-        
-        // seek for superkeys
+                
+        // seek for exact key and superkeys
         let filtered: [(String.Index, String, [String])] =
             dict
             .compactMap { e in

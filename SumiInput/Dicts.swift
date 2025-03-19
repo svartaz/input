@@ -53,7 +53,7 @@ let dicts: Dicts = {
                 "armn", // 0530
                 "arab", // 0600
                 "deva", // 0900
-                "tibt", // 0F00
+                //"tibt", // 0F00
                 "hang", // 1100
                 "hanz", // 4E00
                 "ja",

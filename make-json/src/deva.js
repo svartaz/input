@@ -1,6 +1,8 @@
-const { valueToSingleton } = require("./util");
+const { valueToSingleton } = require("./utility");
 
 const dict = {
+  " ": " ",
+
   nn: "\u0902",
   ss: "\u0903",
 
