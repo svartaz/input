@@ -57,7 +57,7 @@ let dicts: Dicts = {
                 "hang", // 1100
                 "hrkt", // 3040
                 "hanz", // 4E00
-                "yue",  //
+                "yue",
             ]
             .compactMap { context in
                 fetch(context).map { (context, $0) }

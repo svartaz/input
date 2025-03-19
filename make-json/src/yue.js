@@ -1,5 +1,5 @@
 const fs = require("fs");
-const replaceEach = require("./replaceEach.js");
+const { replaceEach } = require("./util.js");
 
 const dict = {};
 

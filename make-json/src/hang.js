@@ -1,5 +1,3 @@
-const replaceEach = require("./replaceEach.js");
-
 const latnsFromU1100 = [
   // initial
   "c-",
@@ -65,8 +63,8 @@ const latnsFromU1100 = [
   "st-",
   "sp-",
   "sx-",
-  "s-",
-  "ss-",
+  "s*-",
+  "ss*-",
   "sj-",
   "ssj-",
 
@@ -84,14 +82,14 @@ const latnsFromU1100 = [
   "'p-",
   "g-",
   "ds'-",
-  "ds-",
-  "dds-",
+  "ds*-",
+  "dds*-",
 
   "dsj-",
   "ddsj-",
   "tsk-",
   "tsx-",
-  "ts-",
+  "ts*-",
   "tsj-",
   "pb-",
   "p'-",

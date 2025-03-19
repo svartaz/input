@@ -1,5 +1,5 @@
 const fs = require("fs");
-const replaceEach = require("./replaceEach");
+const { replaceEach } = require("./util");
 
 const data = fs
   .readFileSync(__dirname + "/../../submodules/Zyevio/隋語廣韻全字表.csv")
