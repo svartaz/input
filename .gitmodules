@@ -1,12 +1,13 @@
 [submodule "submodules/jyutping-table"]
 	path = submodules/jyutping-table
 	url = https://github.com/lshk-org/jyutping-table.git
-[submodule "submodules/Zyevio"]
-	path = submodules/Zyevio
-	url = https://github.com/Magnezone462/Zyevio.git
 [submodule "submodules/unihan-database"]
 	path = submodules/unihan-database
 	url = https://github.com/unicode-org/unihan-database
 [submodule "submodules/pinyin-data"]
 	path = submodules/pinyin-data
 	url = https://github.com/mozillazg/pinyin-data.git
+[submodule "submodules/Zyevio"]
+	path = submodules/Zyevio
+	url = https://github.com/svartaz/Zyevio.git
+	branch = dev
