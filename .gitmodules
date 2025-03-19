@@ -7,3 +7,6 @@
 [submodule "submodules/unihan-database"]
 	path = submodules/unihan-database
 	url = https://github.com/unicode-org/unihan-database
+[submodule "submodules/pinyin-data"]
+	path = submodules/pinyin-data
+	url = https://github.com/mozillazg/pinyin-data.git

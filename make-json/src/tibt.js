@@ -1,4 +1,4 @@
-const { singletonKey } = require("./util");
+const { valueToSingleton } = require("./utility");
 
 const dict = {
   " ": "་",
@@ -138,7 +138,7 @@ require("fs").writeFileSync(
   JSON.stringify(
     {
       name: "tibetan",
-      dict: singletonKey(dict),
+      dict: valueToSingleton(dict),
     },
     null,
     2

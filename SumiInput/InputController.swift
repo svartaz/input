@@ -89,30 +89,39 @@ class InputController: IMKInputController {
         case Key.escape.rawValue:
             // escape key resets everything
             state = .text
-
+            
         case Key.tab.rawValue:
             switch state {
             case .text:
                 return super.handle(event, client: sender)
-
+                
             case .context(let context):
                 client.insertText(
                     enterContext + context, replacementRange: notFound)
                 state = .text
-
+                
             case .key(let context, let key):
                 client.insertText(key, replacementRange: notFound)
                 state = .key(context, "")
             }
-
+            
         case Key.left.rawValue,
             Key.right.rawValue,
             Key.down.rawValue,
-            Key.up.rawValue,
-            Key.return_.rawValue:
+            Key.up.rawValue:
             switch state {
             case .text:
                 return super.handle(event, client: sender)
+            default:
+                candidates.interpretKeyEvents([event])
+            }
+            
+        case Key.return_.rawValue:
+            switch state {
+            case .text, .key(_, ""):
+                // FIXME: context disappears
+                return super.handle(event, client: sender)
+
             default:
                 candidates.interpretKeyEvents([event])
             }
@@ -202,67 +211,69 @@ class InputController: IMKInputController {
 
     func matchKeys(
         _ dict: [String: [String]],
-        _ subkeys: [String],
-        _ subwords: [String],
         _ key: String
-    ) -> ([String], [String], String, [(String, String)]) {
-        // check words of shorter or equal key (first one)
-        for n in 0..<key.count {
-            let keyFirst = String(key.dropLast(n))
-
-            if let word = dict[keyFirst]?.sorted().first {
-                return matchKeys(
-                    dict, subkeys + [keyFirst], subwords + [word],
-                    String(key.dropFirst(key.count - n)))
-            }
+    ) -> [(String, String)] {
+        if key == "" {
+            return []
         }
-
-        // check words of longer key (many)
-        let filtered =
-            dict.compactMap {
+        
+        // exact key
+        if let words = dict[key] {
+            return words.map { (key, $0) }
+        }
+        
+        // seek for superkeys
+        let filtered: [(String.Index, String, [String])] =
+            dict
+            .compactMap { e in
                 if key == "" {
-                    return ($0.key.startIndex, $0.key, $0.value)
-                } else if let index = $0.key.range(of: key)?.lowerBound {
-                    return (index, $0.key, $0.value)
+                    return (e.key.startIndex, e.key, e.value)
+                } else if let index = e.key.range(of: key)?.lowerBound {
+                    return (index, e.key, e.value)
                 } else {
                     return nil
                 }
             }
-
-        /* sort by
-         * - earlier match
-         * - shorter key (higher match rate)
-         * - word
-         */
-        let sorted =
-            filtered.flatMap {
-                let (index, k, words) = $0
-                return
-                    words
-                    .map { w in (index, k, w) }
+        
+         /* sort by
+          * - earlier match
+          * - shorter key (higher match rate)
+          * - word
+          */
+        if !filtered.isEmpty {
+            return filtered
+                .flatMap { a in a.2.map { w in (a.0, a.1, w) } }
+                .sorted { a, b in (a.0, a.1.count, a.2) < (b.0, b.1.count, a.2) }
+                .map { ($0.1, $0.2) }
+        }
+            
+        // split into subkeys
+        // FIXME: too procedural
+        var subkeys: [String] = []
+        var keyRemain = key
+        var nDrop = 1
+        while nDrop < keyRemain.count {
+            let subkey = String(keyRemain.dropLast(nDrop))
+            if dict.keys.contains(subkey) {
+                subkeys.append(subkey)
+                keyRemain = String(keyRemain.dropFirst(keyRemain.count - nDrop))
+                nDrop = 0
+            } else {
+                nDrop += 1
             }
-            .sorted { (a, b) in
-                (a.0, a.1.count, a.2) < (
-                    b.0, b.1.count, b.2
-                )
-            }
-            .map { ($0.1, $0.2) }
+        }
 
-        return (subkeys, subwords, key, sorted)
+        // check words of longer key
+        return [(
+            subkeys.joined(separator: joinSubkeys),
+            subkeys
+                .map { subkey in dict[subkey]!.sorted().first! }
+                .joined(separator: "")
+         )]
     }
 
     func filterKeys(_ dict: [String: [String]], _ key: String) -> [String] {
-        let (subkeys, subwords, keyRemain, sorted) = matchKeys(
-            dict, [], [], key)
-
-        let prepended =
-            !subkeys.isEmpty && (keyRemain.isEmpty || sorted.isEmpty)
-            ? [("", "")] : []
-
-        return (prepended + sorted).map {
-            (subkeys + [$0.0]).joined(separator: joinSubkeys) + joinKeyValue
-                + subwords.joined() + $0.1
-        }
+        return matchKeys(dict, key).map { $0.0.replacingOccurrences(of: " ", with: "␣") + joinKeyValue + $0.1 }
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString!) {
@@ -301,7 +312,7 @@ class InputController: IMKInputController {
             omittingEmptySubsequences: false
         ).map { String($0) }
 
-        return (keyWithWord[0], keyWithWord[1])
+        return (keyWithWord[0].replacingOccurrences(of: "␣", with: " "), keyWithWord[1])
     }
 
     override func deactivateServer(_ sender: Any!) {

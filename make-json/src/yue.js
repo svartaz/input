@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { replaceEach, scToTcs } = require("./util.js");
+const { replaceEach, scToTcs } = require("./utility.js");
 
 const dict = {};
 
@@ -43,6 +43,7 @@ for (const line of fs
 
     [/yu/g, "y"],
     [/eo/g, "oe"],
+    [/aa$/, "a"],
 
     [/^j(?=i|y|oe)/, ""],
     [/^w(?=u)/, ""],
