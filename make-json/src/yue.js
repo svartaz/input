@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { replaceEach, scToTcs } = require("./utility.js");
+const { replaceEach, scToTcs, hanzInRange } = require("./utility.js");
 
 const dict = {};
 
@@ -12,8 +12,6 @@ for (const line of fs
   const hanz = row[0].split(" ")[1];
   const latnOld = row[2].replace(/\d$/, "");
   const toneOld = parseInt(row[2].slice(-1));
-
-  if (latnOld === "" || isNaN(toneOld)) continue;
 
   const voiced = [4, 5, 6].includes(toneOld);
 
@@ -32,8 +30,8 @@ for (const line of fs
     [/^t/, "tx"],
     [/^d/, "t"],
 
-    [/^c/, "tsx"],
-    [/^z/, "ts"],
+    [/^c/, "Sx"],
+    [/^z/, "S"],
 
     [/^k/, "kx"],
     [/^g/, "k"],
@@ -54,7 +52,7 @@ for (const line of fs
     ...(voiced
       ? [
           [/^k/, "c"],
-          [/^ts/, "dz"],
+          [/^S/, "Z"],
           [/^t/, "d"],
           [/^p/, "b"],
           [/^s/, "z"],
@@ -63,19 +61,30 @@ for (const line of fs
 
           ...(tone < 2
             ? [
-                [/(?<=c|dz?|b)(?!x)/, "h"],
-                [/(?<=c|dz?|b)x/, ""],
+                [/(?<=c|d|Z|b)(?!x)/, "h"],
+                [/(?<=c|d|Z|b)x/, ""],
               ]
             : []),
         ]
       : [[/^(?=[gnmljwiueoay])/, "q"]]),
 
+    [/^S/, "ts"],
+    [/^Z/, "dz"],
+
     [/$/, ["", "q", "s", ""][tone]],
   ]);
 
-  if (!(hanz in scToTcs))
-    if (dict[latn]) dict[latn].push(hanz);
-    else dict[latn] = [hanz];
+  if (hanz in scToTcs) {
+    console.log("simplified", hanz);
+    continue;
+  }
+  if (!hanzInRange(hanz)) {
+    console.log("uncommon", hanz);
+    continue;
+  }
+
+  if (dict[latn]) dict[latn].push(hanz);
+  else dict[latn] = [hanz];
 }
 
 fs.writeFileSync(

@@ -1,6 +1,13 @@
-const { valueToSingleton } = require("./utility");
+const fs = require("fs");
+const {
+  replaceEach,
+  scToTcs,
+  valueToSingleton,
+  hanzInRange,
+} = require("./utility");
 
-const dict = {
+// hira, kana
+const dict = valueToSingleton({
   a: "あ",
   i: "い",
   u: "う",
@@ -230,7 +237,7 @@ const dict = {
   "]": "」",
   "[[": "『",
   "]]": "』",
-};
+});
 
 for (const isKata of [false, true]) {
   for (const k0 of "k c s z t d n f p b m j r w v".split(" "))
@@ -243,7 +250,7 @@ for (const isKata of [false, true]) {
         const v1 = isKata ? dict["_" + k1.toUpperCase()] : dict["_" + k1];
         const k = isKata ? (k0 + k1).toUpperCase() : k0 + k1;
 
-        if (v0 && v1) dict[k] = v0 + v1;
+        if (v0 && v1) dict[k] = [v0 + v1];
       }
 
   for (const k0 of "k c s z t d f p b r v".split(" "))
@@ -252,15 +259,73 @@ for (const isKata of [false, true]) {
       const v1 = isKata ? dict[(k0 + k1).toUpperCase()] : dict[k0 + k1];
       const k = isKata ? (k0 + k0 + k1).toUpperCase() : k0 + k0 + k1;
 
-      if (v1) dict[k] = v0 + v1;
+      if (v1) dict[k] = [v0 + v1];
     }
 }
 
-require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/hrkt.json`,
-  JSON.stringify(
-    { name: "hiragana+katakana", dict: valueToSingleton(dict) },
-    null,
-    2
-  )
+// hanz
+for (const line of fs
+  .readFileSync(process.env.HOME + "/Downloads/Unihan/Unihan_Readings.txt")
+  .toString()
+  .trim()
+  .split("\n"))
+  if (line[0] !== "#") {
+    const row = line.split(/\t/g);
+    if (row[1] !== "kJapaneseOn") continue;
+
+    const hanz = String.fromCharCode(parseInt(row[0].replace("U+", "0x")));
+    if (!hanzInRange(hanz)) {
+      console.log("uncommon", hanz);
+      continue;
+    }
+    if (hanz in scToTcs) {
+      //console.log("simplified", hanz, latn);
+      continue;
+    }
+
+    for (const latnOld of row[2].split(/ /g)) {
+      latn = replaceEach(latnOld.toLowerCase(), [
+        [/shi/g, "si"],
+        [/sh/g, "sy"],
+        [/ji/g, "zi"],
+        [/j/g, "zy"],
+        [/tsu/g, "tu"],
+        [/chi/g, "ti"],
+        [/ch/g, "ty"],
+        [/h/g, "f"],
+        [/g/g, "c"],
+        [/y/g, "j"],
+
+        [/juu/g, "iu"],
+        [/jou/g, "eu"],
+
+        [/(?<=[aiueo][ktf])[iu]$/g, ""],
+      ]);
+
+      if (/[aiueo][^aiueo][aiueo]/.test(latn)) {
+        console.log("two vowels", hanz, latn);
+        continue;
+      }
+
+      if (/[auieo]{3,}/.test(latn)) {
+        console.log("three vowel", hanz, latn);
+        continue;
+      }
+
+      if (/aa|ii|ee|oo/.test(latn)) {
+        console.log("long vowel", hanz, latn);
+        continue;
+      }
+
+      latn = latn.slice(0, 1).toUpperCase() + latn.slice(1);
+
+      if (dict[latn]) {
+        if (!dict[latn].includes(hanz)) dict[latn].push(hanz);
+      } else dict[latn] = [hanz];
+    }
+  }
+
+fs.writeFileSync(
+  __dirname + "/../../SumiInput/dicts.bundle/ja.json",
+  JSON.stringify({ name: "japanese", dict }, null, 2)
 );

@@ -55,8 +55,9 @@ let dicts: Dicts = {
                 "deva", // 0900
                 "tibt", // 0F00
                 "hang", // 1100
-                "hrkt", // 3040
                 "hanz", // 4E00
+                "ja",
+                "cmn",
                 "yue",
             ]
             .compactMap { context in

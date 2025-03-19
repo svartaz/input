@@ -71,7 +71,7 @@ class InputController: IMKInputController {
         NSLog("InputController init!")
         state = .text
         candidates = IMKCandidates(
-            server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
+            server: server, panelType: kIMKScrollingGridCandidatePanel)
 
         super.init(server: server, delegate: delegate, client: inputClient)
     }

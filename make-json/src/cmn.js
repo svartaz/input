@@ -1,3 +1,5 @@
+// https://www.unicode.org/Public/UNIDATA/Unihan.zip
+
 const fs = require("fs");
 const { replaceEach, scToTcs } = require("./utility.js");
 
@@ -70,9 +72,10 @@ for (const line of fs
       [/$/, ["", "/", "<", "\\", "*"][tone]],
     ]);
 
-    if (!(hanz in scToTcs))
-      if (dict[latn]) dict[latn].push(hanz);
-      else dict[latn] = [hanz];
+    if (hanz in scToTcs) continue;
+
+    if (dict[latn]) dict[latn].push(hanz);
+    else dict[latn] = [hanz];
   }
 }
 
