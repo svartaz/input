@@ -28,7 +28,7 @@ h glottal
 */
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/ipa.json`,
+  __dirname + `/../SumiInput/dicts.bundle/ipa.json`,
   JSON.stringify(
     {
       name: "ipa",

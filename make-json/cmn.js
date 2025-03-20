@@ -6,7 +6,7 @@ const { replaceEach, scToTcs, hanzInRange } = require("./utility.js");
 const dict = {};
 
 for (const line of fs
-  .readFileSync(__dirname + "/../../submodules/pinyin-data/kMandarin.txt")
+  .readFileSync(__dirname + "/../submodules/pinyin-data/kMandarin.txt")
   .toString()
   .trim()
   .split("\n")) {
@@ -29,7 +29,7 @@ for (const line of fs
       b  p  f  m
       d  t     n
       z  ts s  l
-      j  tr x  r
+      j  tx x  r
       c  k  h  g
       i u y
       e a
@@ -58,7 +58,7 @@ for (const line of fs
       [/o/, "e"],
 
       [/^zh/, "j"],
-      [/^ch/, "tr"],
+      [/^ch/, "tx"],
       [/^sh/, "x"],
 
       [/^c/, "ts"],
@@ -68,6 +68,7 @@ for (const line of fs
       [/ü/, "y"],
 
       [/(?<=[iuy])e(?=[iugn])/, ""],
+      [/(?<=^(z|t?s|j|t?x))i$/, ""],
 
       [/$/, ["", "/", "<", "\\", "*"][tone]],
     ]);
@@ -81,6 +82,6 @@ for (const line of fs
 }
 
 fs.writeFileSync(
-  __dirname + "/../../SumiInput/dicts.bundle/cmn.json",
+  __dirname + "/../SumiInput/dicts.bundle/cmn.json",
   JSON.stringify({ name: "mandarin", dict }, null, 2),
 );

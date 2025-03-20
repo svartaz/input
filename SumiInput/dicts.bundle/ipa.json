@@ -1,0 +1,14 @@
+{
+  "name": "ipa",
+  "dict": {
+    "f ld": ["ɸ"],
+    "v ld": ["β"],
+    "m ld": ["ɱ"],
+    "v approx": ["ʋ"],
+    "v tap": ["ⱱ"],
+    "t fric": ["θ"],
+    "d fric": ["ð"],
+    "r approx": ["ɹ"],
+    "r tap": ["ɾ"]
+  }
+}

@@ -71,7 +71,7 @@ class InputController: IMKInputController {
         NSLog("InputController init!")
         state = .text
         candidates = IMKCandidates(
-            server: server, panelType: kIMKScrollingGridCandidatePanel)
+            server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
 
         super.init(server: server, delegate: delegate, client: inputClient)
     }
@@ -179,20 +179,18 @@ class InputController: IMKInputController {
     }
 
     override func candidates(_ sender: Any!) -> [Any]! {
-        NSLog("InputController candidates")
-
         if case .context(let context) = state {
-            return filterContexts(context)
+            return candidatesContexts(context)
         } else if case .key(let context, let key) = state,
             let (_, dict) = dicts[context]
         {
-            return filterKeys(dict, key)
+            return candidatesKeys(dict, key)
         }
 
         return []
     }
 
-    func filterContexts(_ context: String) -> [String] {
+    func candidatesContexts(_ context: String) -> [String] {
         dicts
             .compactMap {
                 if context == "" {
@@ -271,7 +269,7 @@ class InputController: IMKInputController {
         ]
     }
 
-    func filterKeys(_ dict: [String: [String]], _ key: String) -> [String] {
+    func candidatesKeys(_ dict: [String: [String]], _ key: String) -> [String] {
         return matchKeys(dict, key).map {
             $0.0.replacingOccurrences(of: " ", with: "␣") + joinKeyValue + $0.1
         }

@@ -408,6 +408,6 @@ for (let unicode = 0xac00; unicode < 0xd7a4; unicode++) {
 }
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/hang.json`,
+  __dirname + `/../SumiInput/dicts.bundle/hang.json`,
   JSON.stringify({ name: "hangul", dict }, null, 2),
 );

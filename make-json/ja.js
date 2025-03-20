@@ -326,6 +326,6 @@ for (const line of fs
   }
 
 fs.writeFileSync(
-  __dirname + "/../../SumiInput/dicts.bundle/ja.json",
+  __dirname + "/../SumiInput/dicts.bundle/ja.json",
   JSON.stringify({ name: "japanese", dict }, null, 2),
 );

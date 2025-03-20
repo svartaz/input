@@ -2,7 +2,7 @@ const fs = require("fs");
 const { replaceEach } = require("./utility");
 
 const data = fs
-  .readFileSync(__dirname + "/../../submodules/Zyevio/隋語廣韻全字表.csv")
+  .readFileSync(__dirname + "/../submodules/Zyevio/隋語廣韻全字表.csv")
   .toString()
   .trim()
   .split("\n")
@@ -49,6 +49,6 @@ for (const line of data) {
 }
 
 fs.writeFileSync(
-  __dirname + "/../../SumiInput/dicts.bundle/hanz.json",
-  JSON.stringify({ name: "chinese character", dict }, null, 2),
+  __dirname + "/../SumiInput/dicts.bundle/hanz.json",
+  JSON.stringify({ name: "chinese character", dict }, null, 2)
 );

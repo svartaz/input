@@ -121,7 +121,7 @@ for (const [k, v] of Object.entries(dict))
         dictComposed[k.replace(/a$/, "") + k1.replace(/^-/, "")] = v + v1;
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/deva.json`,
+  __dirname + `/../SumiInput/dicts.bundle/deva.json`,
   JSON.stringify(
     {
       name: "devanagari",

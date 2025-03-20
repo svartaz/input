@@ -9,7 +9,7 @@ exports.valueToSingleton = (o) =>
 exports.scToTcs = Object.fromEntries(
   fs
     .readFileSync(
-      __dirname + "/../../submodules/unihan-database/kTraditionalVariant.txt",
+      __dirname + "/../submodules/unihan-database/kTraditionalVariant.txt",
     )
     .toString()
     .trim()

@@ -134,7 +134,7 @@ const dict = {
 };
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/tibt.json`,
+  __dirname + `/../SumiInput/dicts.bundle/tibt.json`,
   JSON.stringify(
     {
       name: "tibetan",

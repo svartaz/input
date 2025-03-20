@@ -1,7 +1,7 @@
 const { valueToSingleton } = require("./utility");
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/latn.json`,
+  __dirname + `/../SumiInput/dicts.bundle/latn.json`,
   JSON.stringify(
     {
       name: "latin",
