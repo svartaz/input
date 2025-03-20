@@ -8,7 +8,7 @@ enum State {
     case key(String, String)
 }
 
-enum Key: UInt16 {
+private enum Key: UInt16 {
     case backslash = 42
     case tab = 48
     case delete = 51
@@ -209,10 +209,9 @@ class InputController: IMKInputController {
     func matchKeys(
         _ dict: [String: [String]],
         _ keyPrefixed: String
-    ) -> [(String, String)] {
+    ) -> [(key: String, word: String)] {
         let partial = keyPrefixed.starts(with: enterPartialMatch)
-        NSLog("\(partial)")
-        let key = keyPrefixed.replacing("^" + enterPartialMatch, with: "")
+        let key = keyPrefixed.replacing(try! Regex("^" + enterPartialMatch), with: "")
 
         if key == "" { return [] }
 
@@ -324,7 +323,7 @@ class InputController: IMKInputController {
             (
                 subkeys.joined(separator: joinSubkeys),
                 subkeys
-                    .map { subkey in dict[subkey]!.sorted().first! }
+                    .map { dict[$0]!.sorted().first! }
                     .joined(separator: "")
             )
         ]
@@ -332,7 +331,8 @@ class InputController: IMKInputController {
 
     func candidatesKey(_ dict: [String: [String]], _ key: String) -> [String] {
         return matchKeys(dict, key).map {
-            $0.0.replacingOccurrences(of: " ", with: "␣") + joinKeyValue + $0.1
+            $0.key.replacingOccurrences(of: " ", with: "␣") + joinKeyValue
+                + $0.word
         }
     }
 

@@ -97,5 +97,23 @@ func fetchDicts() -> Dicts {
                 })
             )
         ),
+        "emoji": (
+            "😀",
+            Dictionary(
+                uniqueKeysWithValues: unicodes.compactMap { unicode in
+                    if let us = UnicodeScalar(unicode),
+                       us.properties.isEmoji
+                    {
+                        return (
+                            (us.properties.nameAlias ?? us.properties.name
+                             ?? String(unicode, radix: 16)).lowercased(),
+                            [String(us)]
+                        )
+                    } else {
+                        return nil
+                    }
+                }
+            )
+        ),
     ].merging(dictsFetched, uniquingKeysWith: { it, _ in it })
 }
