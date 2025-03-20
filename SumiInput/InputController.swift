@@ -62,6 +62,7 @@ class InputController: IMKInputController {
     let enterContext = "\\"
     let joinSubkeys = "·"
     let joinKeyValue = " ▸ "
+    let enterPartialMatch = "%"
 
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!)
     {
@@ -207,65 +208,99 @@ class InputController: IMKInputController {
 
     func matchKeys(
         _ dict: [String: [String]],
-        _ key: String
+        _ keyPrefixed: String
     ) -> [(String, String)] {
-        if key == "" {
-            return []
-        }
+        let partial = keyPrefixed.starts(with: enterPartialMatch)
+        NSLog("\(partial)")
+        let key = keyPrefixed.replacing("^" + enterPartialMatch, with: "")
 
-        // seek for exact key and superkeys
-        let rowsSuperkey:
-            [(index: String.Index, key: String, words: [String])] =
-                dict.compactMap { e in
+        if key == "" { return [] }
+
+        if partial {
+            // seek for exact key and superkeys
+            let rowsSuperkey =
+                dict.compactMap {
                     if key == "" {
                         return (
-                            index: e.key.startIndex, key: e.key, words: e.value
+                            key: $0.key, index: $0.key.startIndex
                         )
-                    } else if let index = e.key.range(of: key)?.lowerBound {
-                        return (index: index, key: e.key, words: e.value)
+                    } else if let index = $0.key.range(of: key)?.lowerBound {
+                        return (key: $0.key, index: index)
                     } else {
                         return nil
                     }
                 }
 
-        if !rowsSuperkey.isEmpty {
-            let flattened =
-                rowsSuperkey
-                .flatMap { a in
-                    a.words.map { (index: a.index, key: a.key, word: $0) }
-                }
-
-            /* sort by
-             * - earlier match
-             * - shorter key (higher match rate)
-             * - word
-             */
-            let sorted =
-                flattened.count < 1000
-                ? flattened.sorted {
-                    ($0.index, $0.key.count, $0.word.count, $0.word) < (
-                        $1.index, $1.key.count, $1.word.count, $1.word
-                    )
-                }
-                : flattened.count < 10000
-                    ? flattened
-                        .filter { $0.index == $0.key.startIndex }
-                        .sorted {
-                            ($0.key.count, $0.word.count, $0.word) < (
-                                $1.key.count, $1.word.count, $1.word
-                            )
+            if !rowsSuperkey.isEmpty {
+                let flattened =
+                    rowsSuperkey.flatMap { a in
+                        dict[a.key]!.map {
+                            (key: a.key, index: a.index, word: $0)
                         }
-                    : flattened.count < 100000
+                    }
+
+                /* sort by
+                 * - earlier match
+                 * - shorter key (higher match rate)
+                 * - word
+                 */
+                let sorted =
+                    flattened.count < 1000
+                    ? flattened.sorted {
+                        ($0.index, $0.key.count, $0.word.count, $0.word) < (
+                            $1.index, $1.key.count, $1.word.count, $1.word
+                        )
+                    }
+                    : flattened.count < 10000
                         ? flattened
                             .filter { $0.index == $0.key.startIndex }
                             .sorted {
-                                ($0.key.count, $0.word.count) < (
-                                    $1.key.count, $1.word.count
+                                ($0.key.count, $0.word.count, $0.word) < (
+                                    $1.key.count, $1.word.count, $1.word
                                 )
                             }
+                        : flattened.count < 100000
+                            ? flattened
+                                .filter { $0.index == $0.key.startIndex }
+                                .sorted {
+                                    ($0.key.count, $0.word.count) < (
+                                        $1.key.count, $1.word.count
+                                    )
+                                }
+                            : flattened
+
+                return sorted.map { ($0.key, $0.word) }
+            }
+        } else {
+            let superkeys =
+                dict.compactMap {
+                    key == "" || $0.key.starts(with: key)
+                        ? $0.key
+                        : nil
+                }
+
+            if !superkeys.isEmpty {
+                let flattened = superkeys.flatMap { k in
+                    dict[k]!.map { (key: k, word: $0) }
+                }
+
+                let sorted =
+                    flattened.count < 10000
+                    ? flattened.sorted {
+                        ($0.key.count, $0.word.count, $0.word) < (
+                            $1.key.count, $1.word.count, $1.word
+                        )
+                    }
+                    : flattened.count < 100000
+                        ? flattened.sorted {
+                            ($0.key.count, $0.word.count) < (
+                                $1.key.count, $1.word.count
+                            )
+                        }
                         : flattened
 
-            return sorted.map { ($0.1, $0.2) }
+                return sorted.map { ($0.key, $0.word) }
+            }
         }
 
         // split into subkeys
@@ -307,7 +342,6 @@ class InputController: IMKInputController {
             fatalError("should not select in text mode")
 
         case .context(_):
-            NSLog(candidateString.string)
             state = .key(
                 fromCandidate(candidateString.string, joinKeyValue).0,
                 "")
@@ -326,7 +360,8 @@ class InputController: IMKInputController {
                     context,
                     key.replacing(
                         keySelected.replacingOccurrences(
-                            of: joinSubkeys, with: ""),
+                            of: "^" + enterPartialMatch + "|" + joinSubkeys,
+                            with: ""),
                         with: "")
                 )
         }

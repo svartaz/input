@@ -1,5 +1,21 @@
 # sumi-input
 
+## usage
+
+### states
+
+- text
+  - normally input text
+- context
+  - choose a context (a set of keys and words)
+- key(context)
+  - choose a key which is converted into a word
+
+### switcher
+
+- `\` text → context, context → text
+- `%` context (starts-with) → context (partially-matches)
+
 ## generate json
 
 ```sh
