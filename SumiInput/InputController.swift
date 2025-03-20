@@ -184,7 +184,7 @@ class InputController: IMKInputController {
         } else if case .key(let context, let key) = state,
             let (_, dict) = dicts[context]
         {
-            return candidatesKeys(dict, key)
+            return candidatesKey(dict, key)
         }
 
         return []
@@ -216,30 +216,50 @@ class InputController: IMKInputController {
         }
 
         // seek for exact key and superkeys
-        let filtered: [(String.Index, String, [String])] =
-            dict
-            .compactMap { e in
-                if key == "" {
-                    return (e.key.startIndex, e.key, e.value)
-                } else if let index = e.key.range(of: key)?.lowerBound {
-                    return (index, e.key, e.value)
-                } else {
-                    return nil
+        let rowsSuperkey:
+            [(index: String.Index, key: String, words: [String])] =
+                dict.compactMap { e in
+                    if key == "" {
+                        return (
+                            index: e.key.startIndex, key: e.key, words: e.value
+                        )
+                    } else if let index = e.key.range(of: key)?.lowerBound {
+                        return (index: index, key: e.key, words: e.value)
+                    } else {
+                        return nil
+                    }
                 }
-            }
 
-        /* sort by
-         * - earlier match
-         * - shorter key (higher match rate)
-         * - word
-         */
-        if !filtered.isEmpty {
-            return
-                filtered
-                .flatMap { a in a.2.map { w in (a.0, a.1, w) } }
-                .sorted { a, b in (a.0, a.1.count, a.2) < (b.0, b.1.count, a.2)
+        if !rowsSuperkey.isEmpty {
+            let flattened =
+                rowsSuperkey
+                .flatMap { a in
+                    a.words.map { (index: a.index, key: a.key, word: $0) }
                 }
-                .map { ($0.1, $0.2) }
+
+            /* sort by
+             * - earlier match
+             * - shorter key (higher match rate)
+             * - word
+             */
+            let sorted =
+                flattened.count < 1000
+                ? flattened.sorted {
+                    ($0.index, $0.key.count, $0.word) < (
+                        $1.index, $1.key.count, $1.word
+                    )
+                }
+                : flattened.count < 10000
+                    ? flattened.sorted {
+                        ($0.index, $0.key.count) < (
+                            $1.index, $1.key.count
+                        )
+                    }
+                    : flattened.count < 100000
+                        ? flattened.sorted { $0.index < $1.index }
+                        : flattened
+
+            return sorted.map { ($0.1, $0.2) }
         }
 
         // split into subkeys
@@ -269,7 +289,7 @@ class InputController: IMKInputController {
         ]
     }
 
-    func candidatesKeys(_ dict: [String: [String]], _ key: String) -> [String] {
+    func candidatesKey(_ dict: [String: [String]], _ key: String) -> [String] {
         return matchKeys(dict, key).map {
             $0.0.replacingOccurrences(of: " ", with: "␣") + joinKeyValue + $0.1
         }

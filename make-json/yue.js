@@ -74,11 +74,12 @@ for (const line of fs
     [/$/, ["", "q", "s", ""][tone]],
   ]);
 
-  if (hanz in scToTcs) continue;
   if (!hanzInRange(hanz)) continue;
 
-  if (dict[latn]) dict[latn].push(hanz);
-  else dict[latn] = [hanz];
+  for (const h of hanz in scToTcs ? scToTcs[hanz] : [hanz])
+    if (latn in dict) {
+      if (!dict[latn].includes(hanz)) dict[latn].push(hanz);
+    } else dict[latn] = [hanz];
 }
 
 fs.writeFileSync(

@@ -44,6 +44,7 @@ const dict = valueToSingleton({
   tu: "つ",
   te: "て",
   to: "と",
+  t: "っ",
   _tu: "っ",
   da: "だ",
   di: "ぢ",
@@ -144,6 +145,7 @@ const dict = valueToSingleton({
   TE: "テ",
   TO: "ト",
   _TU: "ッ",
+  T: "ッ",
   _TO: "ㇳ",
   DA: "ダ",
   DI: "ヂ",
@@ -264,65 +266,186 @@ for (const isKata of [false, true]) {
 }
 
 // hanz
-for (const line of fs
-  .readFileSync(process.env.HOME + "/Downloads/Unihan/Unihan_Readings.txt")
-  .toString()
-  .trim()
-  .split("\n"))
-  if (line[0] !== "#") {
+if (false)
+  for (const line of fs
+    .readFileSync(process.env.HOME + "/Downloads/Unihan/Unihan_Readings.txt")
+    .toString()
+    .trim()
+    .split("\n"))
+    if (line[0] !== "#") {
+      const row = line.split(/\t/g);
+      if (row[1] !== "kJapaneseOn") continue;
+
+      const hanz = String.fromCharCode(parseInt(row[0].replace("U+", "0x")));
+      if (!hanzInRange(hanz)) continue;
+      if (hanz in scToTcs) continue;
+      if (!hanzInRange(hanz)) {
+        console.log("uncommon", hanz);
+        continue;
+      }
+
+      for (const latnOld of row[2].split(/ /g)) {
+        latn = replaceEach(latnOld.toLowerCase(), [
+          [/shi/g, "si"],
+          [/sh/g, "sy"],
+          [/ji/g, "zi"],
+          [/j/g, "zy"],
+          [/tsu/g, "tu"],
+          [/chi/g, "ti"],
+          [/ch/g, "ty"],
+          [/h/g, "f"],
+          [/g/g, "c"],
+          [/y/g, "j"],
+
+          [/juu/g, "iu"],
+          [/jou/g, "eu"],
+
+          [/(?<=[aiueo][ktf])[iu]$/g, ""],
+        ]);
+
+        if (hanz === "出") console.log(hanz, latn);
+
+        if (/[aiueo][^aiueo][aiueo]/.test(latn)) {
+          //console.log("two vowels", hanz, latn);
+          continue;
+        }
+
+        if (/[auieo]{3,}/.test(latn)) {
+          //console.log("three vowel", hanz, latn);
+          continue;
+        }
+
+        if (/a[aeo]|i[aieo]|u[aeo]|e[aeo]|o[aeo]/.test(latn)) {
+          //console.log("hiatus", hanz, latn);
+          continue;
+        }
+
+        latn = latn.slice(0, 1).toUpperCase() + latn.slice(1);
+
+        if (dict[latn]) {
+          if (!dict[latn].includes(hanz)) dict[latn].push(hanz);
+        } else dict[latn] = [hanz];
+      }
+    }
+
+for (let i = 0; i < 10; i++)
+  for (const line of fs
+    .readFileSync(
+      `${__dirname}/../submodules/mozc/src/data/dictionary_oss/dictionary0${i}.txt`,
+    )
+    .toString()
+    .trim()
+    .split("\n")) {
     const row = line.split(/\t/g);
-    if (row[1] !== "kJapaneseOn") continue;
+    if (!/^\p{sc=Han}+$/u.test(row[4])) continue;
 
-    const hanz = String.fromCharCode(parseInt(row[0].replace("U+", "0x")));
-    if (!hanzInRange(hanz)) continue;
-    if (hanz in scToTcs) continue;
-    if (!hanzInRange(hanz)) {
-      console.log("uncommon", hanz);
-      continue;
-    }
+    const word = row[4].replace(/./g, (h) =>
+      h in scToTcs && scToTcs[h].length == 1 ? scToTcs[h][0] : h,
+    );
 
-    for (const latnOld of row[2].split(/ /g)) {
-      latn = replaceEach(latnOld.toLowerCase(), [
-        [/shi/g, "si"],
-        [/sh/g, "sy"],
-        [/ji/g, "zi"],
-        [/j/g, "zy"],
-        [/tsu/g, "tu"],
-        [/chi/g, "ti"],
-        [/ch/g, "ty"],
-        [/h/g, "f"],
-        [/g/g, "c"],
-        [/y/g, "j"],
+    const latn = replaceEach(row[0], [
+      [/あ/g, "a"],
+      [/い/g, "i"],
+      [/う/g, "u"],
+      [/え/g, "e"],
+      [/お/g, "o"],
 
-        [/juu/g, "iu"],
-        [/jou/g, "eu"],
+      [/か/g, "ka"],
+      [/き/g, "ki"],
+      [/く/g, "ku"],
+      [/け/g, "ke"],
+      [/こ/g, "ko"],
 
-        [/(?<=[aiueo][ktf])[iu]$/g, ""],
-      ]);
+      [/が/g, "ca"],
+      [/ぎ/g, "ci"],
+      [/ぐ/g, "cu"],
+      [/げ/g, "ce"],
+      [/ご/g, "co"],
 
-      if (hanz === "出") console.log(hanz, latn);
+      [/さ/g, "sa"],
+      [/し/g, "si"],
+      [/す/g, "su"],
+      [/せ/g, "se"],
+      [/そ/g, "so"],
 
-      if (/[aiueo][^aiueo][aiueo]/.test(latn)) {
-        //console.log("two vowels", hanz, latn);
-        continue;
-      }
+      [/ざ/g, "za"],
+      [/じ/g, "zi"],
+      [/ず/g, "zu"],
+      [/ぜ/g, "ze"],
+      [/ぞ/g, "zo"],
 
-      if (/[auieo]{3,}/.test(latn)) {
-        //console.log("three vowel", hanz, latn);
-        continue;
-      }
+      [/た/g, "ta"],
+      [/ち/g, "ti"],
+      [/つ/g, "tu"],
+      [/て/g, "te"],
+      [/と/g, "to"],
 
-      if (/a[aeo]|i[aieo]|u[aeo]|e[aeo]|o[aeo]/.test(latn)) {
-        //console.log("hiatus", hanz, latn);
-        continue;
-      }
+      [/だ/g, "da"],
+      [/ぢ/g, "di"],
+      [/づ/g, "du"],
+      [/で/g, "de"],
+      [/ど/g, "do"],
 
-      latn = latn.slice(0, 1).toUpperCase() + latn.slice(1);
+      [/な/g, "na"],
+      [/に/g, "ni"],
+      [/ぬ/g, "nu"],
+      [/ね/g, "ne"],
+      [/の/g, "no"],
 
-      if (dict[latn]) {
-        if (!dict[latn].includes(hanz)) dict[latn].push(hanz);
-      } else dict[latn] = [hanz];
-    }
+      [/は/g, "fa"],
+      [/ひ/g, "fi"],
+      [/ふ/g, "fu"],
+      [/へ/g, "fe"],
+      [/ほ/g, "fo"],
+
+      [/ぱ/g, "pa"],
+      [/ぴ/g, "pi"],
+      [/ぷ/g, "pu"],
+      [/ぺ/g, "pe"],
+      [/ぽ/g, "po"],
+
+      [/ば/g, "ba"],
+      [/び/g, "bi"],
+      [/ぶ/g, "bu"],
+      [/べ/g, "be"],
+      [/ぼ/g, "bo"],
+
+      [/ま/g, "ma"],
+      [/み/g, "mi"],
+      [/む/g, "mu"],
+      [/め/g, "me"],
+      [/も/g, "mo"],
+
+      [/や/g, "ja"],
+      [/ゆ/g, "ju"],
+      [/よ/g, "jo"],
+
+      [/ら/g, "ra"],
+      [/り/g, "ri"],
+      [/る/g, "ru"],
+      [/れ/g, "re"],
+      [/ろ/g, "ro"],
+
+      [/わ/g, "wa"],
+      [/ゐ/g, "wi"],
+      [/ゑ/g, "we"],
+      [/を/g, "wo"],
+
+      [/ん/g, "n"],
+      [/っ(.)/g, "$1$1"],
+      [/っ/g, "t"],
+      [/iゃ/g, "ja"],
+      [/iゅ/g, "ju"],
+      [/iょ/g, "jo"],
+      [/uゎ/g, "wa"],
+
+      [/juu/g, "iu"],
+      [/jou/g, "eu"],
+    ]);
+
+    if (dict[latn]) {
+      if (!dict[latn].includes(word)) dict[latn].push(word);
+    } else dict[latn] = [word];
   }
 
 fs.writeFileSync(

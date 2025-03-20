@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { replaceEach } = require("./utility");
+const { replaceEach, scToTcs } = require("./utility");
 
 const data = fs
   .readFileSync(__dirname + "/../submodules/Zyevio/隋語廣韻全字表.csv")
@@ -44,8 +44,10 @@ const dict = {};
 for (const line of data) {
   const [hanz, latn] = line.split("\t");
 
-  if (dict[latn]) dict[latn].push(hanz);
-  else dict[latn] = [hanz];
+  for (const h of hanz in scToTcs ? scToTcs[hanz] : [hanz])
+    if (dict[latn]) {
+      if (!dict[latn].includes(hanz)) dict[latn].push(hanz);
+    } else dict[latn] = [hanz];
 }
 
 fs.writeFileSync(

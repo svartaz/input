@@ -19,7 +19,8 @@ exports.scToTcs = Object.fromEntries(
       const sc = row[0].split(" ")[1];
       const tcs = row[row.length - 1]
         .split(" ")
-        .map((u) => String.fromCharCode(Number(u.replace("U+", "0x"))));
+        .map((u) => String.fromCharCode(Number(u.replace("U+", "0x"))))
+        .filter((it) => it != sc);
       return [sc, tcs];
     }),
 );

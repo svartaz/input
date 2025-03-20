@@ -11,3 +11,6 @@
 	path = submodules/Zyevio
 	url = https://github.com/svartaz/Zyevio.git
 	branch = dev
+[submodule "submodules/mozc"]
+	path = submodules/mozc
+	url = https://github.com/google/mozc.git
