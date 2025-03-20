@@ -18,12 +18,12 @@ for (const line of fs
     const tone = /\u0304/.test(latn)
       ? 0
       : /\u0301/.test(latn)
-        ? 1
-        : /\u030C/.test(latn)
-          ? 2
-          : /\u0300/.test(latn)
-            ? 3
-            : 4;
+      ? 1
+      : /\u030C/.test(latn)
+      ? 2
+      : /\u0300/.test(latn)
+      ? 3
+      : 4;
 
     /*vw
       b  p  f  m
@@ -68,7 +68,7 @@ for (const line of fs
       [/ü/, "y"],
 
       [/(?<=[iuy])e(?=[iugn])/, ""],
-      [/(?<=^(z|t?s|j|t?x))i$/, ""],
+      [/(?<=^(z|t?s|j|t?x|r))i$/, ""],
 
       [/$/, ["", "/", "<", "\\", "*"][tone]],
     ]);
@@ -83,5 +83,5 @@ for (const line of fs
 
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/cmn.json",
-  JSON.stringify({ name: "mandarin", dict }, null, 2),
+  JSON.stringify({ name: "mandarin", dict }, null, 2)
 );
