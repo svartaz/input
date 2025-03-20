@@ -124,7 +124,7 @@ require("fs").writeFileSync(
   __dirname + `/../SumiInput/dicts.bundle/deva.json`,
   JSON.stringify(
     {
-      name: "devanagari",
+      name: "देवनागरी",
       dict: valueToSingleton({ ...dict, ...dictComposed }),
     },
     null,

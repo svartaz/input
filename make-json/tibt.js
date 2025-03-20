@@ -137,7 +137,7 @@ require("fs").writeFileSync(
   __dirname + `/../SumiInput/dicts.bundle/tibt.json`,
   JSON.stringify(
     {
-      name: "tibetan",
+      name: "བོད་ཡིག",
       dict: valueToSingleton(dict),
     },
     null,
