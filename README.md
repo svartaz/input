@@ -3,7 +3,7 @@
 ## generate json
 
 ```sh
-sh make-json.sh
+./make-json.sh
 ```
 
 ## run

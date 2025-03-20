@@ -22,8 +22,8 @@ enum Key: UInt16 {
 
 @objc(InputController)
 class InputController: IMKInputController {
-    let dicts = fetchDicts()
     var candidates = IMKCandidates()
+    let dicts = fetchDicts()
 
     var state: State {
         didSet {
@@ -243,18 +243,26 @@ class InputController: IMKInputController {
             let sorted =
                 flattened.count < 1000
                 ? flattened.sorted {
-                    ($0.index, $0.key.count, $0.word) < (
-                        $1.index, $1.key.count, $1.word
+                    ($0.index, $0.key.count, $0.word.count, $0.word) < (
+                        $1.index, $1.key.count, $1.word.count, $1.word
                     )
                 }
                 : flattened.count < 10000
-                    ? flattened.sorted {
-                        ($0.index, $0.key.count) < (
-                            $1.index, $1.key.count
-                        )
-                    }
+                    ? flattened
+                        .filter { $0.index == $0.key.startIndex }
+                        .sorted {
+                            ($0.key.count, $0.word.count, $0.word) < (
+                                $1.key.count, $1.word.count, $1.word
+                            )
+                        }
                     : flattened.count < 100000
-                        ? flattened.sorted { $0.index < $1.index }
+                        ? flattened
+                            .filter { $0.index == $0.key.startIndex }
+                            .sorted {
+                                ($0.key.count, $0.word.count) < (
+                                    $1.key.count, $1.word.count
+                                )
+                            }
                         : flattened
 
             return sorted.map { ($0.1, $0.2) }
@@ -311,13 +319,16 @@ class InputController: IMKInputController {
                 word,
                 replacementRange: notFound)
 
-            state = .key(
-                context,
-                key.replacingOccurrences(
-                    of: keySelected.replacingOccurrences(
-                        of: joinSubkeys, with: ""),
-                    with: "")
-            )
+            state =
+                key.count < keySelected.count
+                ? .key(context, "")
+                : .key(
+                    context,
+                    key.replacing(
+                        keySelected.replacingOccurrences(
+                            of: joinSubkeys, with: ""),
+                        with: "")
+                )
         }
     }
 

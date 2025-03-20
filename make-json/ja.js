@@ -1,4 +1,7 @@
 const fs = require("fs");
+const OpenCC = require("opencc-js");
+const convert = OpenCC.Converter({ from: "jp", to: "tw" });
+
 const {
   replaceEach,
   scToTcs,
@@ -331,10 +334,11 @@ if (false)
       }
     }
 
+// hanz word
 for (let i = 0; i < 10; i++)
   for (const line of fs
     .readFileSync(
-      `${__dirname}/../submodules/mozc/src/data/dictionary_oss/dictionary0${i}.txt`,
+      `${__dirname}/../submodules/mozc/src/data/dictionary_oss/dictionary0${i}.txt`
     )
     .toString()
     .trim()
@@ -342,9 +346,7 @@ for (let i = 0; i < 10; i++)
     const row = line.split(/\t/g);
     if (!/^\p{sc=Han}+$/u.test(row[4])) continue;
 
-    const word = row[4].replace(/./g, (h) =>
-      h in scToTcs && scToTcs[h].length == 1 ? scToTcs[h][0] : h,
-    );
+    const word = convert(row[4]);
 
     const latn = replaceEach(row[0], [
       [/あ/g, "a"],
@@ -444,6 +446,8 @@ for (let i = 0; i < 10; i++)
 
       [/juu/g, "iu"],
       [/jou/g, "eu"],
+
+      [/^(.)(.*)$/g, (_, a, b) => a.toUpperCase() + b],
     ]);
 
     if (dict[latn]) {
@@ -453,5 +457,5 @@ for (let i = 0; i < 10; i++)
 
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/ja.json",
-  JSON.stringify({ name: "日本語", dict }, null, 2),
+  JSON.stringify({ name: "日本語", dict }, null, 2)
 );
