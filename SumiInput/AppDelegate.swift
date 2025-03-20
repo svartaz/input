@@ -1,4 +1,3 @@
-import Cocoa
 import InputMethodKit
 
 class NSManualApplication: NSApplication {

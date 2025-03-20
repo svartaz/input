@@ -1,5 +1,3 @@
-import AppKit
-import Cocoa
 import InputMethodKit
 
 let notFound = NSRange(location: NSNotFound, length: NSNotFound)
@@ -24,6 +22,7 @@ enum Key: UInt16 {
 
 @objc(InputController)
 class InputController: IMKInputController {
+    let dicts = fetchDicts()
     var candidates = IMKCandidates()
 
     var state: State {
@@ -61,14 +60,13 @@ class InputController: IMKInputController {
     }
 
     let enterContext = "\\"
-
     let joinSubkeys = "·"
-
     let joinKeyValue = " ▸ "
 
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!)
     {
         NSLog("InputController init!")
+
         state = .text
         candidates = IMKCandidates(
             server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)

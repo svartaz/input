@@ -8,6 +8,9 @@ const {
 
 // hira, kana
 const dict = valueToSingleton({
+  " ": " ",
+  '"': '"',
+
   a: "あ",
   i: "い",
   u: "う",

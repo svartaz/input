@@ -61,7 +61,7 @@ const pinyinToLatn = (pinyin) => {
     [/(?<=[iuy])e(?=[iugn])/, ""],
     [/(?<=^(z|t?s|j|t?x|r))i$/, ""],
 
-    [/$/, ["", "/", "<", "\\", "*"][tone]],
+    [/$/, ["|", "/", "<", "\\", "*"][tone]],
   ]);
 };
 
@@ -104,7 +104,7 @@ for (const line of fs
     .map(pinyinToLatn)
     // delete tone in poly-syllable word
     .map((it, _, self) =>
-      2 <= self.length ? (it) => it.replace(/[\/<\\\*]$/, "") : it,
+      2 <= self.length ? it.replace(/[\|\/<\\\*]$/, "") : it,
     )
     .join(" ");
 

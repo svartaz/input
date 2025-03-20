@@ -1,8 +1,8 @@
-import Foundation
+import AppKit
 
 typealias Dicts = [String: (String, [String: [String]])]
 
-let dicts: Dicts = {
+func fetchDicts() -> Dicts {
     let unicodes = [0..<0xD800, 0xE000..<0x10FFFF].joined()
 
     class DictNamed: Decodable {
@@ -98,4 +98,4 @@ let dicts: Dicts = {
             )
         ),
     ].merging(dictsFetched, uniquingKeysWith: { it, _ in it })
-}()
+}
