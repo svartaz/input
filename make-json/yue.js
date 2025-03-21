@@ -1,5 +1,11 @@
 const fs = require("fs");
-const { replaceEach, scToTcs, hanzInRange } = require("./utility.js");
+const {
+  replaceEach,
+  scToTcs,
+  常用國字標準字體表,
+  次常用國字標準字體表,
+  香港增補字符集,
+} = require("./utility.js");
 
 const dict = {};
 
@@ -9,7 +15,14 @@ for (const line of fs
   .trim()
   .split("\n")) {
   const row = line.split("\t");
+
   const hanz = row[0].split(" ")[1];
+  if (!/^\p{sc=Han}$/u.test(hanz)) continue;
+  if (
+    !(常用國字標準字體表 + 次常用國字標準字體表 + 香港增補字符集).includes(hanz)
+  )
+    continue;
+
   const latnOld = row[2].replace(/\d$/, "");
   const toneOld = parseInt(row[2].slice(-1));
 
@@ -71,10 +84,14 @@ for (const line of fs
     [/^S/, "ts"],
     [/^Z/, "dz"],
 
+    // shorten
+    //[/wai/, "wi"],
+    //[/(?<=kx?|c[xh]?|[xh]|q?g)ei/, "i"],
+    //[/(?<=tx?|d[xh]?|q?[nl])ou/, "u"],
+    //[/(?<!^(tsx?|dz[xh]?|[sz]|q?j))oej/, "y"],
+
     [/$/, ["", "q", "s", ""][tone]],
   ]);
-
-  if (!hanzInRange(hanz)) continue;
 
   for (const h of hanz in scToTcs ? scToTcs[hanz] : [hanz])
     if (latn in dict) {

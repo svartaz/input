@@ -72,7 +72,7 @@ func fetchDicts() -> Dicts {
         "u10": (
             "unicode 10",
             Dictionary(
-                uniqueKeysWithValues: unicodes.map({
+                uniqueKeysWithValues: unicodes.map {
                     (
                         String(
                             format:
@@ -80,13 +80,13 @@ func fetchDicts() -> Dicts {
                         ),
                         [String(UnicodeScalar($0)!)]
                     )
-                })
+                }
             )
         ),
         "u16": (
             "unicode 16",
             Dictionary(
-                uniqueKeysWithValues: unicodes.map({
+                uniqueKeysWithValues: unicodes.map {
                     (
                         String(
                             format:
@@ -94,7 +94,7 @@ func fetchDicts() -> Dicts {
                             $0),
                         [String(UnicodeScalar($0)!)]
                     )
-                })
+                }
             )
         ),
         "emoji": (
@@ -102,11 +102,11 @@ func fetchDicts() -> Dicts {
             Dictionary(
                 uniqueKeysWithValues: unicodes.compactMap { unicode in
                     if let us = UnicodeScalar(unicode),
-                       us.properties.isEmoji
+                        us.properties.isEmoji
                     {
                         return (
                             (us.properties.nameAlias ?? us.properties.name
-                             ?? String(unicode, radix: 16)).lowercased(),
+                                ?? String(unicode, radix: 16)).lowercased(),
                             [String(us)]
                         )
                     } else {

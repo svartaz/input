@@ -1,7 +1,15 @@
 // https://www.unicode.org/Public/UNIDATA/Unihan.zip
 
 const fs = require("fs");
-const { replaceEach, scToTcs, hanzInRange } = require("./utility.js");
+const {
+  replaceEach,
+  scToTcs,
+  常用國字標準字體表,
+  次常用國字標準字體表,
+} = require("./utility.js");
+
+const inTaiwanStandard = (hanz) =>
+  (常用國字標準字體表 + 次常用國字標準字體表).includes(hanz);
 
 const pinyinToLatn = (pinyin) => {
   /*
@@ -74,9 +82,13 @@ for (const line of fs
   .trim()
   .split("\n")) {
   const row = line.replace(/ *#.+$/, "").split(": ");
-  const hanz = String.fromCharCode(parseInt(row[0].replace("U+", "0x")));
 
-  if (!hanzInRange(hanz)) continue;
+  const hanz = String.fromCharCode(parseInt(row[0].replace("U+", "0x")));
+  if (!/^\p{sc=Han}$/u.test(hanz)) continue;
+  if (!inTaiwanStandard(hanz)) {
+    console.log("non-standard", hanz);
+    continue;
+  }
 
   for (const latnOld of row[1].split(" ")) {
     const latn = pinyinToLatn(latnOld);
