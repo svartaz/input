@@ -127,5 +127,5 @@ for (const line of fs
 
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/cmn.json",
-  JSON.stringify({ name: "華語", dict }, null, 2),
+  JSON.stringify({ name: "華", dict }, null, 2),
 );

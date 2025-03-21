@@ -206,101 +206,110 @@ class InputController: IMKInputController {
             .map { $0.1 + joinKeyValue + $0.2 }
     }
 
-    func matchKeys(
+    func superkeysSorted(
         _ dict: [String: [String]],
-        _ keyPrefixed: String
+        _ key: String,
+        _ partial: Bool
     ) -> [(key: String, word: String)] {
-        let partial = keyPrefixed.starts(with: enterPartialMatch)
-        let key = keyPrefixed.replacing(try! Regex("^" + enterPartialMatch), with: "")
+        NSLog("superkeysSorted")
 
+        // every key is superkey of empty key
+        // but return nothing instead, since it's heavy otherwise
         if key == "" { return [] }
 
         if partial {
-            // seek for exact key and superkeys
-            let rowsSuperkey =
+            // seek for and superkeys
+            let superkeys =
                 dict.compactMap {
-                    if key == "" {
-                        return (
-                            key: $0.key, index: $0.key.startIndex
-                        )
-                    } else if let index = $0.key.range(of: key)?.lowerBound {
+                    if let index = $0.key.range(of: key)?.lowerBound {
                         return (key: $0.key, index: index)
                     } else {
                         return nil
                     }
                 }
 
-            if !rowsSuperkey.isEmpty {
-                let flattened =
-                    rowsSuperkey.flatMap { a in
-                        dict[a.key]!.map {
-                            (key: a.key, index: a.index, word: $0)
-                        }
-                    }
+            let flattened = superkeys.flatMap { a in
+                dict[a.key]!.map {
+                    (key: a.key, index: a.index, word: $0)
+                }
+            }
 
-                /* sort by
-                 * - earlier match
-                 * - shorter key (higher match rate)
-                 * - word
-                 */
-                let sorted =
-                    flattened.count < 1000
-                    ? flattened.sorted {
-                        ($0.index, $0.key.count, $0.word.count, $0.word) < (
-                            $1.index, $1.key.count, $1.word.count, $1.word
-                        )
-                    }
-                    : flattened.count < 10000
+            /* sort by
+             * - earlier match
+             * - shorter key (higher match rate)
+             * - word
+             */
+            let sorted =
+                flattened.count < 1000
+                ? flattened.sorted {
+                    ($0.index, $0.key.count, $0.word.count, $0.word) < (
+                        $1.index, $1.key.count, $1.word.count, $1.word
+                    )
+                }
+                : flattened.count < 10000
+                    ? flattened
+                        .filter { $0.index == $0.key.startIndex }
+                        .sorted {
+                            ($0.key.count, $0.word.count, $0.word) < (
+                                $1.key.count, $1.word.count, $1.word
+                            )
+                        }
+                    : flattened.count < 100000
                         ? flattened
                             .filter { $0.index == $0.key.startIndex }
                             .sorted {
-                                ($0.key.count, $0.word.count, $0.word) < (
-                                    $1.key.count, $1.word.count, $1.word
+                                ($0.key.count, $0.word.count) < (
+                                    $1.key.count, $1.word.count
                                 )
                             }
-                        : flattened.count < 100000
-                            ? flattened
-                                .filter { $0.index == $0.key.startIndex }
-                                .sorted {
-                                    ($0.key.count, $0.word.count) < (
-                                        $1.key.count, $1.word.count
-                                    )
-                                }
-                            : flattened
+                        : flattened
 
-                return sorted.map { ($0.key, $0.word) }
-            }
+            return sorted.map { ($0.key, $0.word) }
         } else {
             let superkeys =
                 dict.compactMap {
-                    key == "" || $0.key.starts(with: key)
+                    $0.key.starts(with: key)
                         ? $0.key
                         : nil
                 }
 
-            if !superkeys.isEmpty {
-                let flattened = superkeys.flatMap { k in
-                    dict[k]!.map { (key: k, word: $0) }
-                }
+            let flattened = superkeys.flatMap { k in
+                dict[k]!.map { (key: k, word: $0) }
+            }
 
-                let sorted =
-                    flattened.count < 10000
+            let sorted =
+                flattened.count < 10000
+                ? flattened.sorted {
+                    ($0.key.count, $0.word.count, $0.word) < (
+                        $1.key.count, $1.word.count, $1.word
+                    )
+                }
+                : flattened.count < 100000
                     ? flattened.sorted {
-                        ($0.key.count, $0.word.count, $0.word) < (
-                            $1.key.count, $1.word.count, $1.word
+                        ($0.key.count, $0.word.count) < (
+                            $1.key.count, $1.word.count
                         )
                     }
-                    : flattened.count < 100000
-                        ? flattened.sorted {
-                            ($0.key.count, $0.word.count) < (
-                                $1.key.count, $1.word.count
-                            )
-                        }
-                        : flattened
+                    : flattened
 
-                return sorted.map { ($0.key, $0.word) }
-            }
+            return sorted.map { ($0.key, $0.word) }
         }
+    }
+
+    func matchKeys(
+        _ dict: [String: [String]],
+        _ keyPrefixed: String
+    ) -> [(key: String, word: String)] {
+        NSLog("matchKeys")
+
+        let partial = keyPrefixed.starts(with: enterPartialMatch)
+        let key = keyPrefixed.replacing(
+            try! Regex("^" + enterPartialMatch), with: "")
+
+        if key == "" { return [] }
+
+        let superkeys = superkeysSorted(dict, key, partial)
+        if !superkeys.isEmpty { return superkeys }
 
         // split into subkeys
         // FIXME: too procedural
@@ -317,16 +326,36 @@ class InputController: IMKInputController {
                 nDrop += 1
             }
         }
-
-        // check words of longer key
-        return [
-            (
-                subkeys.joined(separator: joinSubkeys),
-                subkeys
-                    .map { dict[$0]!.sorted().first! }
-                    .joined(separator: "")
+        let (subkeysFirst, subkeyLast) =
+            keyRemain == ""
+            ? (
+                Array(subkeys[0..<subkeys.count - 1]),
+                subkeys.last!
             )
-        ]
+            : (
+                subkeys,
+                keyRemain
+            )
+        NSLog("subkeysFirst=\(subkeysFirst) subkeyLast=\(subkeyLast)")
+        
+        let supersubkeys = superkeysSorted(dict, subkeyLast, false)
+
+        return supersubkeys.isEmpty
+            ? [
+                (
+                    subkeysFirst.joined(separator: joinSubkeys),
+                    subkeysFirst
+                        .map { dict[$0]!.sorted().first! }
+                        .joined(separator: "")
+                )
+            ]
+            : supersubkeys.map {
+                (
+                    (subkeysFirst + [$0.key]).joined(separator: joinSubkeys),
+                    (subkeysFirst.map { dict[$0]!.sorted().first! } + [$0.word])
+                        .joined(separator: "")
+                )
+            }
     }
 
     func candidatesKey(_ dict: [String: [String]], _ key: String) -> [String] {

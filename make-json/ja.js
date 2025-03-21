@@ -446,6 +446,8 @@ for (let i = 0; i < 10; i++)
 
       [/juu/g, "iu"],
       [/jou/g, "eu"],
+
+      [/(.)(.+)/, (_, a, b) => a.toUpperCase() + b],
     ]);
 
     if (dict[latn]) {
@@ -455,5 +457,5 @@ for (let i = 0; i < 10; i++)
 
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/ja.json",
-  JSON.stringify({ name: "日本語", dict }, null, 2),
+  JSON.stringify({ name: "日", dict }, null, 2),
 );

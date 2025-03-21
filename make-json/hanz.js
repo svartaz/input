@@ -52,5 +52,5 @@ for (const line of data) {
 
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/hanz.json",
-  JSON.stringify({ name: "漢字", dict }, null, 2),
+  JSON.stringify({ name: "漢", dict }, null, 2),
 );
