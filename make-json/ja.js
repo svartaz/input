@@ -338,13 +338,13 @@ if (false)
 for (let i = 0; i < 10; i++)
   for (const line of fs
     .readFileSync(
-      `${__dirname}/../submodules/mozc/src/data/dictionary_oss/dictionary0${i}.txt`,
+      `${__dirname}/../submodules/mozc/src/data/dictionary_oss/dictionary0${i}.txt`
     )
     .toString()
     .trim()
     .split("\n")) {
     const row = line.split(/\t/g);
-    if (!/^\p{sc=Han}+$/u.test(row[4])) continue;
+    if (!/^\p{sc=Han}+\p{sc=Hiragana}*$/u.test(row[4])) continue;
 
     const word = convert(row[4]);
 
@@ -457,5 +457,5 @@ for (let i = 0; i < 10; i++)
 
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/ja.json",
-  JSON.stringify({ name: "日", dict }, null, 2),
+  JSON.stringify({ name: "日", dict }, null, 2)
 );
