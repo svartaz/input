@@ -277,7 +277,7 @@ class InputController: IMKInputController {
                 dict[k]!.map { (key: k, word: $0) }
             }
 
-            let sorted =
+            return
                 flattened.count < 10000
                 ? flattened.sorted {
                     ($0.key.count, $0.word.count, $0.word) < (
@@ -291,8 +291,6 @@ class InputController: IMKInputController {
                         )
                     }
                     : flattened
-
-            return sorted.map { ($0.key, $0.word) }
         }
     }
 
@@ -326,6 +324,7 @@ class InputController: IMKInputController {
                 nDrop += 1
             }
         }
+
         let (subkeysFirst, subkeyLast) =
             keyRemain == ""
             ? (
@@ -336,8 +335,7 @@ class InputController: IMKInputController {
                 subkeys,
                 keyRemain
             )
-        NSLog("subkeysFirst=\(subkeysFirst) subkeyLast=\(subkeyLast)")
-        
+
         let supersubkeys = superkeysSorted(dict, subkeyLast, false)
 
         return supersubkeys.isEmpty
