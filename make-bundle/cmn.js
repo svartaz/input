@@ -25,12 +25,12 @@ const pinyinToLatn = (pinyin) => {
   const tone = /\u0304|1$/.test(latn)
     ? 0
     : /\u0301|2$/.test(latn)
-    ? 1
-    : /\u030C|3$/.test(latn)
-    ? 2
-    : /\u0300|4$/.test(latn)
-    ? 3
-    : 4;
+      ? 1
+      : /\u030C|3$/.test(latn)
+        ? 2
+        : /\u0300|4$/.test(latn)
+          ? 3
+          : 4;
 
   return replaceEach(latn, [
     [/[\u0304\u0301\u030C\u0300]|[1-5]$/, ""],
@@ -112,7 +112,7 @@ for (const line of fs
     .map(pinyinToLatn)
     // delete tone in poly-syllable word
     .map((it, _, self) =>
-      2 <= self.length ? it.replace(/[\|\/<\\\*]$/, "") : it
+      2 <= self.length ? it.replace(/[\|\/<\\\*]$/, "") : it,
     )
     .join(" ");
 
@@ -123,5 +123,5 @@ for (const line of fs
 
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/cmn.json",
-  JSON.stringify({ name: "華", dict }, null, 2)
+  JSON.stringify({ name: "華", dict }),
 );

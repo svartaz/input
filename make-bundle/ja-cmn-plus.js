@@ -12,7 +12,7 @@ for (const k in dictJa)
       } else dict[k] = [v];
 
 const dictCmn = require(
-  __dirname + "/../SumiInput/dicts.bundle/cmnPlus.json",
+  __dirname + "/../SumiInput/dicts.bundle/cmn-plus.json",
 ).dict;
 for (const k in dictCmn)
   for (const v of dictCmn[k]) {
@@ -23,6 +23,6 @@ for (const k in dictCmn)
     } else dict[kCap] = [v];
   }
 fs.writeFileSync(
-  __dirname + "/../SumiInput/dicts.bundle/jaCmnPlus.json",
-  JSON.stringify({ name: "日華+", dict }, null, 2),
+  __dirname + "/../SumiInput/dicts.bundle/ja-cmn-plus.json",
+  JSON.stringify({ name: "日華+", dict }),
 );

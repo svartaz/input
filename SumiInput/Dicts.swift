@@ -2,7 +2,7 @@ import AppKit
 
 typealias Dicts = [String: (String, [String: [String]])]
 
-func fetchDicts() -> Dicts {
+let dicts: Dicts = {
     let unicodes = [0..<0xD800, 0xE000..<0x10FFFF].joined()
 
     class DictNamed: Decodable {
@@ -105,4 +105,4 @@ func fetchDicts() -> Dicts {
             )
         ),
     ].merging(dictsFetched, uniquingKeysWith: { it, _ in it })
-}
+}()

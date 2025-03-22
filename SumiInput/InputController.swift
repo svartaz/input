@@ -23,7 +23,6 @@ private enum Key: UInt16 {
 @objc(InputController)
 class InputController: IMKInputController {
     var candidates = IMKCandidates()
-    let dicts = fetchDicts()
 
     var state: State {
         didSet {
@@ -136,7 +135,7 @@ class InputController: IMKInputController {
             case .context(let context):
                 state = .context(String(context.dropLast()))
 
-            case .key(_, ""):
+            case .key(let context, ""):
                 NSLog("delete in context")
                 // delete a letter to the left of buffer
                 // FIXME: replacementRange is ignored
@@ -193,17 +192,27 @@ class InputController: IMKInputController {
         dicts
             .compactMap {
                 if context == "" {
-                    return ($0.key.startIndex, $0.key, $0.value.0)
+                    return (
+                        index: $0.key.startIndex,
+                        key: $0.key,
+                        name: $0.value.0
+                    )
                 } else if let range = $0.key.range(of: context) {
-                    return (range.lowerBound, $0.key, $0.value.0)
+                    return (
+                        index: range.lowerBound,
+                        key: $0.key,
+                        name: $0.value.0
+                    )
                 } else {
                     return nil
                 }
             }
-            .sorted(by: { (a, b) in
-                (a.0, a.1.count, a.1) < (b.0, b.1.count, b.1)
+            .sorted(by: {
+                ($0.index, $0.key.count, $0.key) < (
+                    $1.index, $1.key.count, $1.key
+                )
             })
-            .map { $0.1 + joinKeyValue + $0.2 }
+            .map { $0.key + joinKeyValue + $0.name }
     }
 
     func superkeysSorted(
@@ -317,14 +326,14 @@ class InputController: IMKInputController {
                 index += 1
             }
         }
-        
+
         if keyRemain != "" {
             subkeys.append(keyRemain)
         }
-        
+
         return subkeys
     }
-    
+
     func matchKeys(
         _ dict: [String: [String]],
         _ keyPrefixed: String
@@ -340,7 +349,6 @@ class InputController: IMKInputController {
         let superkeys = superkeysSorted(dict, key, partial)
         if !superkeys.isEmpty { return superkeys }
 
-        
         let subkeys = subkeys(dict, key)
         let subkeysFirst = Array(subkeys[0..<subkeys.count - 1])
         let subkeyLast = subkeys.last!

@@ -337,7 +337,7 @@ if (false)
 for (let i = 0; i < 10; i++)
   for (const line of fs
     .readFileSync(
-      `${__dirname}/../submodules/mozc/src/data/dictionary_oss/dictionary0${i}.txt`
+      `${__dirname}/../submodules/mozc/src/data/dictionary_oss/dictionary0${i}.txt`,
     )
     .toString()
     .trim()
@@ -456,5 +456,5 @@ for (let i = 0; i < 10; i++)
 
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/ja.json",
-  JSON.stringify({ name: "日", dict }, null, 2)
+  JSON.stringify({ name: "日", dict }),
 );

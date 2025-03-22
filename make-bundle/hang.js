@@ -409,5 +409,5 @@ for (let unicode = 0xac00; unicode < 0xd7a4; unicode++) {
 
 require("fs").writeFileSync(
   __dirname + `/../SumiInput/dicts.bundle/hang.json`,
-  JSON.stringify({ name: "한글", dict }, null, 2),
+  JSON.stringify({ name: "한글", dict }),
 );

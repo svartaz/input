@@ -48,3 +48,16 @@ cp -r '~/Library/Developer/Xcode/DerivedData/SumiInput-<random string>/Build/Pro
 , Ą cedille, ogonek
 - Đ stroke
 ```
+
+## reference
+
+- [Latin script in Unicode - Wikipedia](https://en.wikipedia.org/wiki/Latin_script_in_Unicode)
+- [Greek alphabet - Wikipedia](https://en.wikipedia.org/wiki/Greek_alphabet)
+- [Cyrillic script - Wikipedia](https://en.wikipedia.org/wiki/Cyrillic_script)
+- [Standard Chinese phonology - Wikipedia](https://en.wikipedia.org/wiki/Standard_Chinese_phonology)
+- [Hangul Syllables - Wikipedia](https://en.wikipedia.org/wiki/Hangul_Syllables)
+- [Hangul Jamo (Unicode block) - Wikipedia](https://en.wikipedia.org/wiki/Hangul_Jamo_(Unicode_block))
+- [Devanagari - Wikipedia](https://en.wikipedia.org/wiki/Devanagari)
+- [Armenian alphabet - Wikipedia](https://en.wikipedia.org/wiki/Armenian_alphabet)
+- [Classical Armenian - Wikipedia](https://en.wikipedia.org/wiki/Classical_Armenian)
+- [Braille ASCII - Wikipedia](https://en.wikipedia.org/wiki/Braille_ASCII)

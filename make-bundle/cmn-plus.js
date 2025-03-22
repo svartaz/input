@@ -44,6 +44,6 @@ for (const k in dictPlain)
   }
 
 fs.writeFileSync(
-  __dirname + "/../SumiInput/dicts.bundle/cmnPlus.json",
-  JSON.stringify({ name: "華+", dict }, null, 2),
+  __dirname + "/../SumiInput/dicts.bundle/cmn-plus.json",
+  JSON.stringify({ name: "華+", dict }),
 );
