@@ -19,7 +19,7 @@
 ## generate json
 
 ```sh
-./make-json.sh
+./make-bundle.sh
 ```
 
 ## run

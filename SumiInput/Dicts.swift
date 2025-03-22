@@ -10,20 +10,25 @@ func fetchDicts() -> Dicts {
         let dict: [String: [String]]
     }
 
-    func fetch(_ context: String) -> Dicts.Value? {
+    func fetchBundle() -> [(Dicts.Key, Dicts.Value)] {
+        guard
+            let urls = Bundle.main.urls(
+                forResourcesWithExtension: "json", subdirectory: "dicts.bundle")
+        else {
+            return []
+        }
+        return urls.compactMap {
+            let context = $0.deletingPathExtension().relativePath
 
-        if let url = Bundle.main.url(
-            forResource: "dicts.bundle/\(context)", withExtension: "json"),
-            let dictNamed = try? JSONDecoder().decode(
-                DictNamed.self,
-                from: Data(contentsOf: url)
-            )
-        {
-            NSLog("fetched \(context)")
-            return (dictNamed.name, dictNamed.dict)
-        } else {
-            NSLog("failed fetching \(context)")
-            return nil
+            if let dictNamed = try? JSONDecoder().decode(
+                DictNamed.self, from: Data(contentsOf: $0))
+            {
+                NSLog("fetched \(context)")
+                return (context, (dictNamed.name, dictNamed.dict))
+            } else {
+                NSLog("failed fetching \(context)")
+                return nil
+            }
         }
     }
 
@@ -45,23 +50,7 @@ func fetchDicts() -> Dicts {
 
     let dictsFetched: Dicts =
         Dictionary(
-            uniqueKeysWithValues: [
-                "latn",  // 0000
-                "grek",  // 0370
-                "cyrl",  // 0400
-                "armn",  // 0530
-                "arab",  // 0600
-                "deva",  // 0900
-                //"tibt", // 0F00
-                "hang",  // 1100
-                "hanz",  // 4E00
-                "ja",
-                "cmn",
-                "yue",
-            ]
-            .compactMap { context in
-                fetch(context).map { (context, $0) }
-            }
+            uniqueKeysWithValues: fetchBundle()
         )
 
     return [

@@ -294,6 +294,37 @@ class InputController: IMKInputController {
         }
     }
 
+    func subkeys(
+        _ dict: [String: [String]],
+        _ key: String
+    ) -> [String] {
+        // split into subkeys
+        // FIXME: too procedural
+        var subkeys: [String] = []
+        var keyRemain = key
+        var index = 1
+        while index < keyRemain.count {
+            if dict.keys.contains(where: { $0.starts(with: keyRemain) }) {
+                break
+            }
+
+            let subkey = String(keyRemain.dropLast(index))
+            if dict.keys.contains(subkey) {
+                subkeys.append(subkey)
+                keyRemain = String(keyRemain.dropFirst(keyRemain.count - index))
+                index = 0
+            } else {
+                index += 1
+            }
+        }
+        
+        if keyRemain != "" {
+            subkeys.append(keyRemain)
+        }
+        
+        return subkeys
+    }
+    
     func matchKeys(
         _ dict: [String: [String]],
         _ keyPrefixed: String
@@ -309,32 +340,10 @@ class InputController: IMKInputController {
         let superkeys = superkeysSorted(dict, key, partial)
         if !superkeys.isEmpty { return superkeys }
 
-        // split into subkeys
-        // FIXME: too procedural
-        var subkeys: [String] = []
-        var keyRemain = key
-        var nDrop = 1
-        while nDrop < keyRemain.count {
-            let subkey = String(keyRemain.dropLast(nDrop))
-            if dict.keys.contains(subkey) {
-                subkeys.append(subkey)
-                keyRemain = String(keyRemain.dropFirst(keyRemain.count - nDrop))
-                nDrop = 0
-            } else {
-                nDrop += 1
-            }
-        }
-
-        let (subkeysFirst, subkeyLast) =
-            keyRemain == ""
-            ? (
-                Array(subkeys[0..<subkeys.count - 1]),
-                subkeys.last!
-            )
-            : (
-                subkeys,
-                keyRemain
-            )
+        
+        let subkeys = subkeys(dict, key)
+        let subkeysFirst = Array(subkeys[0..<subkeys.count - 1])
+        let subkeyLast = subkeys.last!
 
         let supersubkeys = superkeysSorted(dict, subkeyLast, false)
 
