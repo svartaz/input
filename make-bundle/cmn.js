@@ -1,6 +1,7 @@
 const fs = require("fs");
 const {
   replaceEach,
+  pushUniquelyToValue,
   scToTcs,
   常用國字標準字體表,
   次常用國字標準字體表,
@@ -105,8 +106,9 @@ for (const line of fs
   const word = line.match(/^\p{sc=Han}+(?= )/u)?.[0];
   if (!word) continue;
 
-  const latn = line
+  const k = line
     .match(/(?<=\[).+?(?=\])/)[0]
+    .replace(/ - /g, " ")
     .replace(/u:/g, "ü")
     .split(/ +/g)
     .map(pinyinToLatn)
@@ -116,9 +118,7 @@ for (const line of fs
     )
     .join(" ");
 
-  if (latn in dict) {
-    if (!dict[latn].includes(word)) dict[latn].push(word);
-  } else dict[latn] = [word];
+  pushUniquelyToValue(dict, k, word);
 }
 
 fs.writeFileSync(

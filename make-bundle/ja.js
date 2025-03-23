@@ -4,9 +4,8 @@ const convert = OpenCC.Converter({ from: "jp", to: "tw" });
 
 const {
   replaceEach,
-  scToTcs,
+  pushUniquelyToValue,
   valueToSingleton,
-  hanzInRange,
 } = require("./utility");
 
 // hira, kana
@@ -151,8 +150,9 @@ const dict = valueToSingleton({
   TU: "ツ",
   TE: "テ",
   TO: "ト",
-  _TU: "ッ",
   T: "ッ",
+  Q: "ッ",
+  _TU: "ッ",
   _TO: "ㇳ",
   DA: "ダ",
   DI: "ヂ",
@@ -224,7 +224,7 @@ const dict = valueToSingleton({
   VE: "ヹ",
   VO: "ヺ",
   N: "ン",
-  _N: "𛅧",
+  L: "𛅧",
   ITI: "ヽ",
   "ITI:": "ヾ",
 
@@ -271,67 +271,6 @@ for (const isKata of [false, true]) {
       if (v1) dict[k] = [v0 + v1];
     }
 }
-
-// hanz
-if (false)
-  for (const line of fs
-    .readFileSync(process.env.HOME + "/Downloads/Unihan/Unihan_Readings.txt")
-    .toString()
-    .trim()
-    .split("\n"))
-    if (line[0] !== "#") {
-      const row = line.split(/\t/g);
-      if (row[1] !== "kJapaneseOn") continue;
-
-      const hanz = String.fromCharCode(parseInt(row[0].replace("U+", "0x")));
-      if (!hanzInRange(hanz)) continue;
-      if (hanz in scToTcs) continue;
-      if (!hanzInRange(hanz)) {
-        console.log("uncommon", hanz);
-        continue;
-      }
-
-      for (const latnOld of row[2].split(/ /g)) {
-        latn = replaceEach(latnOld.toLowerCase(), [
-          [/shi/g, "si"],
-          [/sh/g, "sy"],
-          [/ji/g, "zi"],
-          [/j/g, "zy"],
-          [/tsu/g, "tu"],
-          [/chi/g, "ti"],
-          [/ch/g, "ty"],
-          [/h/g, "f"],
-          [/g/g, "c"],
-          [/y/g, "j"],
-
-          [/juu/g, "iu"],
-          [/jou/g, "eu"],
-
-          [/(?<=[aiueo][ktf])[iu]$/g, ""],
-        ]);
-
-        if (/[aiueo][^aiueo][aiueo]/.test(latn)) {
-          //console.log("two vowels", hanz, latn);
-          continue;
-        }
-
-        if (/[auieo]{3,}/.test(latn)) {
-          //console.log("three vowel", hanz, latn);
-          continue;
-        }
-
-        if (/a[aeo]|i[aieo]|u[aeo]|e[aeo]|o[aeo]/.test(latn)) {
-          //console.log("hiatus", hanz, latn);
-          continue;
-        }
-
-        latn = latn.slice(0, 1).toUpperCase() + latn.slice(1);
-
-        if (dict[latn]) {
-          if (!dict[latn].includes(hanz)) dict[latn].push(hanz);
-        } else dict[latn] = [hanz];
-      }
-    }
 
 // hanz word
 for (let i = 0; i < 10; i++)
@@ -449,9 +388,7 @@ for (let i = 0; i < 10; i++)
       [/(.)(.+)/, (_, a, b) => a.toUpperCase() + b],
     ]);
 
-    if (dict[latn]) {
-      if (!dict[latn].includes(word)) dict[latn].push(word);
-    } else dict[latn] = [word];
+    pushUniquelyToValue(dict, latn, word);
   }
 
 fs.writeFileSync(

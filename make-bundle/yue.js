@@ -1,6 +1,7 @@
 const fs = require("fs");
 const {
   replaceEach,
+  pushUniquelyToValue,
   scToTcs,
   常用國字標準字體表,
   次常用國字標準字體表,
@@ -25,9 +26,7 @@ for (const line of fs
 
   const latnOld = row[2].replace(/\d$/, "");
   const toneOld = parseInt(row[2].slice(-1));
-
   const voiced = [4, 5, 6].includes(toneOld);
-
   const tone = /[ktp]$/.test(latnOld)
     ? 3
     : [1, 4].includes(toneOld)
@@ -36,7 +35,7 @@ for (const line of fs
         ? 1
         : 2;
 
-  const latn = replaceEach(latnOld, [
+  const k = replaceEach(latnOld, [
     [/^p/, "px"],
     [/^b/, "p"],
 
@@ -94,9 +93,7 @@ for (const line of fs
   ]);
 
   for (const h of hanz in scToTcs ? scToTcs[hanz] : [hanz])
-    if (latn in dict) {
-      if (!dict[latn].includes(hanz)) dict[latn].push(hanz);
-    } else dict[latn] = [hanz];
+    pushUniquelyToValue(dict, k, hanz);
 }
 
 fs.writeFileSync(

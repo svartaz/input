@@ -1,27 +1,19 @@
 const fs = require("fs");
-const { capitalise, replaceEach } = require("./utility");
+const { capitalise, pushUniquelyToValue } = require("./utility");
 
 const dict = {};
 
 const dictJa = require(__dirname + "/../SumiInput/dicts.bundle/ja.json").dict;
-for (const k in dictJa)
-  for (const v of dictJa[k])
-    if (!/^\p{sc=Han}/u.test(v))
-      if (k in dict) {
-        if (!dict[k].includes(v)) dict[k].push(v);
-      } else dict[k] = [v];
+for (const [k, words] of Object.entries(dictJa))
+  for (const word of words)
+    if (!/^\p{sc=Han}/u.test(word)) pushUniquelyToValue(dict, k, word);
 
 const dictCmn = require(
   __dirname + "/../SumiInput/dicts.bundle/cmn-plus.json",
 ).dict;
-for (const k in dictCmn)
-  for (const v of dictCmn[k]) {
-    const kCap = capitalise(k);
+for (const [k, words] of Object.entries(dictCmn))
+  for (const word of words) pushUniquelyToValue(dict, capitalise(k), word);
 
-    if (kCap in dict) {
-      if (!dict[kCap].includes(v)) dict[kCap].push(v);
-    } else dict[kCap] = [v];
-  }
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/ja-cmn-plus.json",
   JSON.stringify({ name: "日華+", dict }),

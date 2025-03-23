@@ -1,13 +1,9 @@
 const fs = require("fs");
-const { hanzToLatns } = require("./utility");
+const { pushUniquelyToValue, hanzToLatns } = require("./utility");
 
 const dict = {};
-for (const hanz in hanzToLatns)
-  for (const latn of hanzToLatns[hanz]) {
-    if (dict[latn]) {
-      if (!dict[latn].includes(hanz)) dict[latn].push(hanz);
-    } else dict[latn] = [hanz];
-  }
+for (const [hanz, latns] of Object.entries(hanzToLatns))
+  for (const latn of latns) pushUniquelyToValue(dict, latn, hanz);
 
 fs.writeFileSync(
   __dirname + "/../SumiInput/dicts.bundle/hanz.json",

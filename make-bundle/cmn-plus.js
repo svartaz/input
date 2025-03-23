@@ -1,15 +1,19 @@
 // https://www.unicode.org/Public/UNIDATA/Unihan.zip
 
 const fs = require("fs");
-const { replaceEach, hanzToLatns, pushUniq } = require("./utility.js");
+const {
+  replaceEach,
+  pushUniquelyToValue,
+  hanzToLatns,
+} = require("./utility.js");
 
 const dictPlain = require(
   __dirname + "/../SumiInput/dicts.bundle/cmn.json",
 ).dict;
 
 const dict = {};
-for (const k in dictPlain)
-  for (const word of dictPlain[k]) {
+for (const [k, words] of Object.entries(dictPlain))
+  for (const word of words) {
     const kNew = k
       .split(" ")
       .map((syllable, i) => {
@@ -28,19 +32,22 @@ for (const k in dictPlain)
           if (latnsMc.every((l) => /^g/.test(l)))
             syllable = syllable.replace(/^(?=[iuyea])/, "g");
 
-          if (latnsMc.every((l) => /m[qs]?$/.test(l)))
-            syllable = syllable.replace(/n(?=[\|\/<\\]?$)/, "m");
-
           if (latnsMc.every((l) => /[ktp]$/.test(l)))
             // if not nasal coda
-            syllable = syllable.replace(/(?<![gnm])(?=[\|\/<\\]?$)/, "h");
+            syllable = syllable.replace(
+              /(?<![gn])(?=[|/<\\*]|(?<![|/<\\*])$)/,
+              "h",
+            );
+
+          if (latnsMc.every((l) => /m[qs]?$/.test(l)))
+            syllable = syllable.replace(/n(?=[\|\/<\\]?$)/, "m");
         }
 
         return syllable;
       })
       .join(" ");
 
-    dict[kNew] = kNew in dict ? pushUniq(dict[kNew], word) : [word];
+    pushUniquelyToValue(dict, kNew, word);
   }
 
 fs.writeFileSync(

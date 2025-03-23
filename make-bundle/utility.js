@@ -8,8 +8,12 @@ exports.replaceEach = (s, replacements) =>
 exports.valueToSingleton = (o) =>
   Object.fromEntries(Object.entries(o).map(([k, v]) => [k, [v]]));
 
-exports.pushUniq = (array, member) =>
-  array.includes(member) ? array : [...array, member];
+exports.pushUniquelyToValue = (object, key, value) => {
+  if (key in object)
+    if (object[key].includes(value)) 0;
+    else object[key].push(value);
+  else object[key] = [value];
+};
 
 exports.scToTcs = Object.fromEntries(
   fs

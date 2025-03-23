@@ -1,3 +1,5 @@
+const { pushUniquelyToValue } = require("./utility");
+
 const latnsFromU1100 = [
   // initial
   "c-",
@@ -306,29 +308,29 @@ const latnsFromU3131 = [
   "t",
   "p",
   "x",
-  "a",
+  "#a",
 
-  "ai",
-  "ja",
-  "jai",
-  "e",
-  "ei",
-  "je",
-  "jei",
-  "o",
-  "oa",
-  "oai",
-  "oi",
-  "jo",
-  "u",
-  "ue",
-  "uei",
-  "ui",
+  "#ai",
+  "#ja",
+  "#jai",
+  "#e",
+  "#ei",
+  "#je",
+  "#jei",
+  "#o",
+  "#oa",
+  "#oai",
+  "#oi",
+  "#jo",
+  "#u",
+  "#ue",
+  "#uei",
+  "#ui",
 
-  "ju",
-  "w",
-  "wi",
-  "i",
+  "#ju",
+  "#w",
+  "#wi",
+  "#i",
   " ",
   "nn",
   "nd",
@@ -378,24 +380,18 @@ const latnsFromU3131 = [
 
 const dict = {};
 
-latnsFromU1100.forEach((latn, i) => {
-  const hang = String.fromCharCode(0x1100 + i);
-
-  if (latn in dict) dict[latn].push(hang);
-  else dict[latn] = [hang];
+latnsFromU1100.forEach((k, i) => {
+  pushUniquelyToValue(dict, k, String.fromCharCode(0x1100 + i));
 });
 
-latnsFromU3131.forEach((latn, i) => {
-  const hang = String.fromCharCode(0x3131 + i);
-
-  if (latn in dict) dict[latn].push(hang);
-  else dict[latn] = [hang];
+latnsFromU3131.forEach((k, i) => {
+  pushUniquelyToValue(dict, k, String.fromCharCode(0x3131 + i));
 });
 
 for (let unicode = 0xac00; unicode < 0xd7a4; unicode++) {
   const hang = String.fromCharCode(unicode);
 
-  const latn = latnsFromU1100
+  const k = latnsFromU1100
     .reduce(
       (acc, l, i) =>
         acc.replace(new RegExp(String.fromCharCode(0x1100 + i), "g"), l),
@@ -404,7 +400,7 @@ for (let unicode = 0xac00; unicode < 0xd7a4; unicode++) {
     .replace(/^'-/g, "")
     .replace(/-/g, "");
 
-  dict[latn] = [hang];
+  pushUniquelyToValue(dict, k, hang);
 }
 
 require("fs").writeFileSync(

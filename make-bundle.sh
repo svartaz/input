@@ -2,7 +2,7 @@
 
 for i in {0..2}; do
   echo "js $i"
-  find 'make-bundle' -name '*.js' -exec node {} \;
+  find 'make-bundle' -name '*.js' -not -path "make-bundle/node_modules/**" -exec echo {} \; -exec node {} \;
 done
 
 echo 'prettier'
