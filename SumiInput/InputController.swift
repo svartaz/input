@@ -70,6 +70,13 @@ class InputController: IMKInputController {
         state = .text
         candidates = IMKCandidates(
             server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
+        // FIXME: doesn't work
+        /*
+        candidates.setAttributes([
+            NSAttributedString.Key.font:
+               NSFont.monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: NSFont.Weight.regular)
+        ])
+         */
 
         super.init(server: server, delegate: delegate, client: inputClient)
     }

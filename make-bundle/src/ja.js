@@ -272,21 +272,25 @@ for (const isKata of [false, true]) {
     }
 }
 
+const reSuffixHira = /\p{sc=Hiragana}*$/u;
+
 // hanz word
-for (let i = 0; i < 10; i++)
-  for (const line of fs
+for (let iFile = 0; iFile < 10; iFile++) {
+  const lines = fs
     .readFileSync(
-      `${__dirname}/../submodules/mozc/src/data/dictionary_oss/dictionary0${i}.txt`,
+      `${__dirname}/../../submodules/mozc/src/data/dictionary_oss/dictionary0${iFile}.txt`,
     )
     .toString()
     .trim()
-    .split("\n")) {
+    .split("\n");
+
+  for (const [i, line] of lines.entries()) {
     const row = line.split(/\t/g);
     if (!/^\p{sc=Han}+\p{sc=Hiragana}*$/u.test(row[4])) continue;
 
     const word = convert(row[4]);
 
-    const latn = replaceEach(row[0], [
+    const key = replaceEach(row[0], [
       [/あ/g, "a"],
       [/い/g, "i"],
       [/う/g, "u"],
@@ -388,10 +392,11 @@ for (let i = 0; i < 10; i++)
       [/(.)(.+)/, (_, a, b) => a.toUpperCase() + b],
     ]);
 
-    pushUniquelyToValue(dict, latn, word);
+    pushUniquelyToValue(dict, key, word);
   }
+}
 
 fs.writeFileSync(
-  __dirname + "/../SumiInput/dicts.bundle/ja.json",
+  __dirname + "/../../SumiInput/dicts.bundle/ja.json",
   JSON.stringify({ name: "日", dict }),
 );

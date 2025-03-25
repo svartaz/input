@@ -8,7 +8,7 @@ const {
 } = require("./utility.js");
 
 const dictPlain = require(
-  __dirname + "/../SumiInput/dicts.bundle/cmn.json",
+  __dirname + "/../../SumiInput/dicts.bundle/cmn.json",
 ).dict;
 
 const dict = {};
@@ -51,6 +51,6 @@ for (const [k, words] of Object.entries(dictPlain))
   }
 
 fs.writeFileSync(
-  __dirname + "/../SumiInput/dicts.bundle/cmn-plus.json",
+  __dirname + "/../../SumiInput/dicts.bundle/cmn-plus.json",
   JSON.stringify({ name: "華+", dict }),
 );

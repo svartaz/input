@@ -7,6 +7,6 @@ const dict = Object.fromEntries(
 );
 
 require("fs").writeFileSync(
-  __dirname + `/../SumiInput/dicts.bundle/brai.json`,
+  __dirname + `/../../SumiInput/dicts.bundle/brai.json`,
   JSON.stringify({ name: "⠃⠗⠁⠊⠇⠇⠑", dict }),
 );

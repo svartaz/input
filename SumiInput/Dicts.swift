@@ -3,7 +3,7 @@ import AppKit
 typealias Dicts = [String: (String, [String: [String]])]
 
 let dicts: Dicts = {
-    let unicodes = [0..<0xD800, 0xE000..<0x10FFFF].joined()
+    let unicodes = [0..<0xD800, 0xE000..<0x110000].joined()
 
     class DictNamed: Decodable {
         let name: String
@@ -80,6 +80,20 @@ let dicts: Dicts = {
                         String(
                             format:
                                 "%0\(String(unicodes.last! - 1, radix: 16).count)x",
+                            $0),
+                        [String(UnicodeScalar($0)!)]
+                    )
+                }
+            )
+        ),
+        "u32": (
+            "unicode 32",
+            Dictionary(
+                uniqueKeysWithValues: unicodes.map {
+                    (
+                        String(
+                            format:
+                                "%0\(String(unicodes.last! - 1, radix: 32).count)x",
                             $0),
                         [String(UnicodeScalar($0)!)]
                     )

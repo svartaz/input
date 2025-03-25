@@ -47,6 +47,7 @@ cp -r '~/Library/Developer/Xcode/DerivedData/SumiInput-<random string>/Build/Pro
 ' Ơ horn (vi), psili (el)
 , Ą cedille, ogonek
 - Đ stroke
+%   glottal stop
 ```
 
 ## reference

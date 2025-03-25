@@ -11,7 +11,7 @@ const {
 const dict = {};
 
 for (const line of fs
-  .readFileSync(__dirname + "/../submodules/unihan-database/kCantonese.txt")
+  .readFileSync(__dirname + "/../../submodules/unihan-database/kCantonese.txt")
   .toString()
   .trim()
   .split("\n")) {
@@ -97,6 +97,6 @@ for (const line of fs
 }
 
 fs.writeFileSync(
-  __dirname + "/../SumiInput/dicts.bundle/yue.json",
+  __dirname + "/../../SumiInput/dicts.bundle/yue.json",
   JSON.stringify({ name: "粤", dict }),
 );

@@ -391,7 +391,7 @@ latnsFromU3131.forEach((k, i) => {
 for (let unicode = 0xac00; unicode < 0xd7a4; unicode++) {
   const hang = String.fromCharCode(unicode);
 
-  const k = latnsFromU1100
+  const key = latnsFromU1100
     .reduce(
       (acc, l, i) =>
         acc.replace(new RegExp(String.fromCharCode(0x1100 + i), "g"), l),
@@ -400,10 +400,10 @@ for (let unicode = 0xac00; unicode < 0xd7a4; unicode++) {
     .replace(/^'-/g, "")
     .replace(/-/g, "");
 
-  pushUniquelyToValue(dict, k, hang);
+  pushUniquelyToValue(dict, key, hang);
 }
 
 require("fs").writeFileSync(
-  __dirname + `/../SumiInput/dicts.bundle/hang.json`,
+  __dirname + `/../../SumiInput/dicts.bundle/hang.json`,
   JSON.stringify({ name: "한글", dict }),
 );

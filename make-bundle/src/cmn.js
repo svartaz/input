@@ -77,7 +77,7 @@ const dict = {};
 
 // single character
 for (const line of fs
-  .readFileSync(__dirname + "/../submodules/pinyin-data/kMandarin.txt")
+  .readFileSync(__dirname + "/../../submodules/pinyin-data/kMandarin.txt")
   .toString()
   .trim()
   .split("\n")) {
@@ -88,11 +88,10 @@ for (const line of fs
   if (!inTaiwanStandard(hanz)) continue;
 
   for (const latnOld of row[1].split(" ")) {
-    const latn = pinyinToLatn(latnOld);
+    const key = pinyinToLatn(latnOld);
 
     for (const h of hanz in scToTcs ? scToTcs[hanz] : [hanz])
-      if (dict[latn]) dict[latn].push(hanz);
-      else dict[latn] = [hanz];
+      pushUniquelyToValue(dict, key, hanz);
   }
 }
 
@@ -106,7 +105,7 @@ for (const line of fs
   const word = line.match(/^\p{sc=Han}+(?= )/u)?.[0];
   if (!word) continue;
 
-  const k = line
+  const key = line
     .match(/(?<=\[).+?(?=\])/)[0]
     .replace(/ - /g, " ")
     .replace(/u:/g, "ü")
@@ -118,10 +117,10 @@ for (const line of fs
     )
     .join(" ");
 
-  pushUniquelyToValue(dict, k, word);
+  pushUniquelyToValue(dict, key, word);
 }
 
 fs.writeFileSync(
-  __dirname + "/../SumiInput/dicts.bundle/cmn.json",
+  __dirname + "/../../SumiInput/dicts.bundle/cmn.json",
   JSON.stringify({ name: "華", dict }),
 );
