@@ -1,7 +1,6 @@
 const { valueToSingleton } = require("./utility");
 
 const dict = {
-  " ": "་",
   ",": "།",
   ".": "༎",
 

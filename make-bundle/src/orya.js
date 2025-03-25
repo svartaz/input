@@ -2,8 +2,6 @@ const { valueToSingleton, abugida } = require("./utility");
 
 const dict = abugida(
   {
-    " ": " ",
-
     "~": "\u0b01",
     n$: "\u0b02",
     h$: "\u0b03",

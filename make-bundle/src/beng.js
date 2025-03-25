@@ -2,8 +2,6 @@ const { abugida } = require("./utility");
 
 const dict = abugida(
   {
-    " ": " ",
-
     "@": "ঀ",
     "~": "\u0981",
     n$: "\u0982",

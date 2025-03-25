@@ -1,6 +1,12 @@
 import AppKit
 
-typealias Dicts = [String: (String, [String: [String]])]
+typealias Dict = [String: [String]]
+typealias Dicts = [String: (String, Dict)]
+
+let dictAscii = Dictionary<Dict.Key, Dict.Value>(
+    uniqueKeysWithValues: (UnicodeScalar("!").value...UnicodeScalar("~").value).map {
+        (String(UnicodeScalar($0)!), [String(UnicodeScalar($0)!)])
+    })
 
 let dicts: Dicts = {
     let unicodes = [0..<0xD800, 0xE000..<0x110000].joined()
@@ -120,3 +126,12 @@ let dicts: Dicts = {
         ),
     ].merging(dictsFetched, uniquingKeysWith: { it, _ in it })
 }()
+.mapValues {
+    (
+        name: $0.0,
+        dict: $0.1.merging(
+            dictAscii,
+            uniquingKeysWith: { it, _ in it }
+        )
+    )
+}
