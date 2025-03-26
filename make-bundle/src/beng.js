@@ -119,7 +119,7 @@ const dict = abugida(
 );
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/beng.json`,
+  __filename.replace(/[^\/]+$/, (it) => `../../SumiInput/dicts.bundle/${it}on`),
   JSON.stringify(
     {
       name: "বাংলা",

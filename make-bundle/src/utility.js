@@ -35,6 +35,13 @@ console.assert(this.capitalise("capital") === "Capital");
 exports.replaceEach = (s, replacements) =>
   replacements.reduce((acc, replacement) => acc.replace(...replacement), s);
 
+exports.dictUnicodeRange = (begin, keys) =>
+  Object.fromEntries(
+    keys
+      .map((key, i) => [key, [String.fromCharCode(begin + i)]])
+      .filter(([k]) => k !== null),
+  );
+
 exports.valueToSingleton = (o) =>
   Object.fromEntries(Object.entries(o).map(([k, v]) => [k, [v]]));
 
@@ -65,7 +72,7 @@ exports.abugida = (isolates, consonants, vowels) => {
 exports.scToTcs = Object.fromEntries(
   fs
     .readFileSync(
-      __dirname + "/../../submodules/unihan-database/kTraditionalVariant.txt"
+      __dirname + "/../../submodules/unihan-database/kTraditionalVariant.txt",
     )
     .toString()
     .trim()
@@ -78,7 +85,7 @@ exports.scToTcs = Object.fromEntries(
         .map((u) => String.fromCharCode(Number(u.replace("U+", "0x"))))
         .filter((it) => it != sc);
       return [sc, tcs];
-    })
+    }),
 );
 
 exports.rangesCodeHanz = [
@@ -97,7 +104,7 @@ exports.hanzInRange = (hanzOrCode) => {
     typeof hanzOrCode === "string" ? hanzOrCode.codePointAt(0) : hanzOrCode;
 
   return this.rangesCodeHanz.some(
-    ([from, until]) => from <= code && code < until
+    ([from, until]) => from <= code && code < until,
   );
 };
 
@@ -151,16 +158,16 @@ exports.hanzToLatns = (() => {
 
 // https://zh.wikisource.org/wiki/%E5%B8%B8%E7%94%A8%E5%9C%8B%E5%AD%97%E6%A8%99%E6%BA%96%E5%AD%97%E9%AB%94%E8%A1%A8
 exports.常用國字標準字體表 = fs.readFileSync(
-  __dirname + "/../resource/常用國字標準字體表.txt"
+  __dirname + "/../resource/常用國字標準字體表.txt",
 );
 
 // https://zh.wikisource.org/wiki/%E6%AC%A1%E5%B8%B8%E7%94%A8%E5%9C%8B%E5%AD%97%E6%A8%99%E6%BA%96%E5%AD%97%E9%AB%94%E8%A1%A8
 exports.次常用國字標準字體表 = fs.readFileSync(
-  __dirname + "/../resource/次常用國字標準字體表.txt"
+  __dirname + "/../resource/次常用國字標準字體表.txt",
 );
 
 exports.香港增補字符集 = fs.readFileSync(
-  __dirname + "/../resource/香港增補字符集.txt"
+  __dirname + "/../resource/香港增補字符集.txt",
 );
 
 exports.常用漢字表 = fs.readFileSync(__dirname + "/../resource/常用漢字表.txt");

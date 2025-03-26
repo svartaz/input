@@ -51,6 +51,6 @@ for (const [k, words] of Object.entries(dictPlain))
   }
 
 fs.writeFileSync(
-  __dirname + "/../../SumiInput/dicts.bundle/cmn-plus.json",
+  __filename.replace(/[^\/]+$/, (it) => `../../SumiInput/dicts.bundle/${it}on`),
   JSON.stringify({ name: "華+", dict }),
 );

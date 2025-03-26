@@ -395,6 +395,6 @@ for (let iFile = 0; iFile < 10; iFile++) {
 }
 
 fs.writeFileSync(
-  __dirname + "/../../SumiInput/dicts.bundle/ja.json",
+  __filename.replace(/[^\/]+$/, (it) => `../../SumiInput/dicts.bundle/${it}on`),
   JSON.stringify({ name: "日", dict }),
 );

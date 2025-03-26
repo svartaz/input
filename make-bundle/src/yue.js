@@ -97,6 +97,6 @@ for (const line of fs
 }
 
 fs.writeFileSync(
-  __dirname + "/../../SumiInput/dicts.bundle/yue.json",
+  __filename.replace(/\/(?=[^\/]*$)/, "/../../SumiInput/dicts.bundle/") + "on",
   JSON.stringify({ name: "粤", dict }),
 );

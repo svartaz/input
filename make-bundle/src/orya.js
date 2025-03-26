@@ -120,13 +120,9 @@ const dict = abugida(
 );
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/orya.json`,
-  JSON.stringify(
-    {
-      name: "ଓଡ଼ିଆ",
-      dict,
-    },
-    null,
-    2,
-  ),
+  __filename.replace(/[^\/]+$/, (it) => `../../SumiInput/dicts.bundle/${it}on`),
+  JSON.stringify({
+    name: "ଓଡ଼ିଆ",
+    dict,
+  }),
 );

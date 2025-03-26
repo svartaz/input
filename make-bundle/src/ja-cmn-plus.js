@@ -17,6 +17,6 @@ for (const [key, words] of Object.entries(dictCmn))
   for (const word of words) pushUniquelyToValue(dict, capitalise(key), word);
 
 fs.writeFileSync(
-  __dirname + "/../../SumiInput/dicts.bundle/ja-cmn-plus.json",
+  __filename.replace(/[^\/]+$/, (it) => `../../SumiInput/dicts.bundle/${it}on`),
   JSON.stringify({ name: "日華+", dict }),
 );

@@ -1186,13 +1186,9 @@ const dict = {
 };
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/latn.json`,
-  JSON.stringify(
-    {
-      name: "latin",
-      dict: valueToSingleton(dict),
-    },
-    null,
-    2,
-  ),
+  __filename.replace(/[^\/]+$/, (it) => `../../SumiInput/dicts.bundle/${it}on`),
+  JSON.stringify({
+    name: "latin",
+    dict: valueToSingleton(dict),
+  }),
 );

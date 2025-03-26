@@ -44,10 +44,24 @@ cp -r '~/Library/Developer/Xcode/DerivedData/SumiInput-<random string>/Build/Pro
 : Ä trema, umlaut
 ~ Ã tilde
 * Ȧ dot
+@ Å ring
 ' Ơ horn (vi), psili (el)
 , Ą cedille, ogonek
 - Đ stroke
 %   glottal stop
+$   word boundary
+_   abbreviation
+```
+
+## common latin alphabet usage
+
+```text
+c [g]
+g [ɣ, (d)ʒ]
+h [ɦ]
+q [ʔ]
+v [w]
+w [ɨ]
 ```
 
 ## reference

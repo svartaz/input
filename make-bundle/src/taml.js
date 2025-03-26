@@ -87,13 +87,9 @@ const dict = abugida(
 );
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/taml.json`,
-  JSON.stringify(
-    {
-      name: "தமிழ்",
-      dict,
-    },
-    null,
-    2,
-  ),
+  __filename.replace(/\/(?=[^\/]*$)/, "/../../SumiInput/dicts.bundle/") + "on",
+  JSON.stringify({
+    name: "தமிழ்",
+    dict,
+  }),
 );

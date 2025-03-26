@@ -51,7 +51,7 @@ const dict = abugida(
     8: "८",
     9: "९",
 
-    "''": "॰",
+    _: "॰",
     "^.": "ॱ",
 
     "#ae": "ॲ",
@@ -158,13 +158,9 @@ const dict = abugida(
 );
 
 require("fs").writeFileSync(
-  __dirname + `/../../SumiInput/dicts.bundle/deva.json`,
-  JSON.stringify(
-    {
-      name: "देवनागरी",
-      dict,
-    },
-    null,
-    2,
-  ),
+  __filename.replace(/[^\/]+$/, (it) => `../../SumiInput/dicts.bundle/${it}on`),
+  JSON.stringify({
+    name: "देवनागरी",
+    dict,
+  }),
 );
