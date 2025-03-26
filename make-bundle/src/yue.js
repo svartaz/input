@@ -53,13 +53,15 @@ for (const line of fs
 
     [/yu/g, "y"],
     [/eo/g, "oe"],
-    [/aa$/, "a"],
+    [/aa/, "A"],
+    [/a/, "r"],
+    [/A/, "a"],
 
     [/^j(?=i|y|oe)/, ""],
     [/^w(?=u)/, ""],
 
-    [/(?<=[ieaou])i/, "j"],
-    [/(?<=[ieaou])u/, "w"],
+    [/(?<=[ieaour])i/, "j"],
+    [/(?<=[ieaour])u/, "w"],
 
     ...(voiced
       ? [

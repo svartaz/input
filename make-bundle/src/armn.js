@@ -122,5 +122,5 @@ require("fs").writeFileSync(
   JSON.stringify({
     name: "հայոց",
     dict,
-  })
+  }),
 );
