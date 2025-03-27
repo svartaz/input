@@ -1,5 +1,5 @@
 // https://www.unicode.org/charts/PDF/U1100.pdf
-const { pushUniquelyToValue, dictUnicodeRange } = require("./utility");
+const { pushUniquelyToValue, dictUnicodeRange, range } = require("./utility");
 
 const latnsFromU1100 = [
   // initial
@@ -383,7 +383,7 @@ const dict = {
   ]),
 };
 
-for (let unicode = 0xac00; unicode < 0xd7a4; unicode++) {
+for (const unicode of range(0xac00, 0xd7a4)) {
   const hang = String.fromCharCode(unicode);
 
   const key = latnsFromU1100

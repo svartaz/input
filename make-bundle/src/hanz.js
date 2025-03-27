@@ -7,5 +7,5 @@ for (const [hanz, latns] of Object.entries(hanzToLatns))
 
 fs.writeFileSync(
   __filename.replace(/[^\/]+$/, (it) => `../../SumiInput/dicts.bundle/${it}on`),
-  JSON.stringify({ name: "漢", dict }),
+  JSON.stringify({ name: "隋", dict }),
 );

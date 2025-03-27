@@ -51,8 +51,8 @@ const pinyinToLatn = (pinyin) => {
     [/^w/, "u"],
 
     [/ao/, "au"],
-    [/ong/, "ung"],
     [/iong/, "üng"],
+    [/ong/, "ung"],
     [/o/, "e"],
 
     [/^zh/, "j"],

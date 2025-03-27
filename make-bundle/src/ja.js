@@ -6,6 +6,7 @@ const {
   replaceEach,
   pushUniquelyToValue,
   valueToSingleton,
+  range,
 } = require("./utility");
 
 // hira, kana
@@ -273,7 +274,7 @@ for (const isKata of [false, true]) {
 const reSuffixHira = /\p{sc=Hiragana}*$/u;
 
 // hanz word
-for (let iFile = 0; iFile < 10; iFile++) {
+for (const iFile of range(0, 10)) {
   const lines = fs
     .readFileSync(
       `${__dirname}/../../submodules/mozc/src/data/dictionary_oss/dictionary0${iFile}.txt`,
