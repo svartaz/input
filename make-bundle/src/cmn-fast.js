@@ -7,7 +7,7 @@ f * s  x  h u  eg em eu <
 m n l  r  g y  ag am au \
 */
 
-const { replaceEach } = require("./utility");
+const { replaceEach } = require("./_utility");
 
 const fastToNormal = {
   1: "b",

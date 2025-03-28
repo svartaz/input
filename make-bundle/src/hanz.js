@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { pushUniquelyToValue, hanzToLatns } = require("./utility");
+const { pushUniquelyToValue, hanzToLatns } = require("./_utility");
 
 const dict = {};
 for (const [hanz, latns] of Object.entries(hanzToLatns))

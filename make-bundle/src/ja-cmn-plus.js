@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { capitalise, pushUniquelyToValue } = require("./utility");
+const { capitalise, pushUniquelyToValue } = require("./_utility");
 
 const dict = {};
 

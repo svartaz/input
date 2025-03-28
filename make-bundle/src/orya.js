@@ -1,4 +1,4 @@
-const { valueToSingleton, abugida } = require("./utility");
+const { valueToSingleton, abugida } = require("./_utility");
 
 const dict = abugida(
   {

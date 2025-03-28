@@ -6,7 +6,7 @@ const {
   常用國字標準字體表,
   次常用國字標準字體表,
   香港增補字符集,
-} = require("./utility.js");
+} = require("./_utility.js");
 
 const dict = {};
 

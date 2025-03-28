@@ -1,4 +1,4 @@
-const { dictUnicodeRange } = require("./utility");
+const { dictUnicodeRange } = require("./_utility");
 
 const dict = {
   ...dictUnicodeRange(0x531, [

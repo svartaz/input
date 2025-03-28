@@ -7,7 +7,7 @@ const {
   pushUniquelyToValue,
   valueToSingleton,
   range,
-} = require("./utility");
+} = require("./_utility");
 
 // hira, kana
 const dict = valueToSingleton({

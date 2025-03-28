@@ -1,4 +1,4 @@
-const { valueToSingleton } = require("./utility");
+const { valueToSingleton } = require("./_utility");
 
 const dict = {
   // Latin-1 Supplement

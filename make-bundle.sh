@@ -5,4 +5,4 @@ find 'make-bundle/src' -name '*.js' -not -path "make-bundle/node_modules/**" -ex
 
 echo 'prettier'
 prettier make-bundle --write
-prettier SumiInput/dicts.bundle --write
+#prettier SumiInput/dicts.bundle --write

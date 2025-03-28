@@ -1,6 +1,6 @@
 // FIXME
 
-const { abugida } = require("./utility");
+const { abugida } = require("./_utility");
 
 const dict = abugida(
   {

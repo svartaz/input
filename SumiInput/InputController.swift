@@ -48,7 +48,7 @@ class InputController: IMKInputController {
 
             case .key(let context, let key):
                 client().setMarkedText(
-                    "⦗\(dicts[context]!.0)⦘\(key)",
+                    "⦗\(names[context]!)⦘\(key)",
                     selectionRange: notFound,
                     replacementRange: notFound)
 
@@ -142,7 +142,7 @@ class InputController: IMKInputController {
             case .context(let context):
                 state = .context(String(context.dropLast()))
 
-            case .key(let context, ""):
+            case .key(_, ""):
                 NSLog("delete in context")
                 // delete a letter to the left of buffer
                 // FIXME: replacementRange is ignored
@@ -186,40 +186,38 @@ class InputController: IMKInputController {
     override func candidates(_ sender: Any!) -> [Any]! {
         if case .context(let context) = state {
             return candidatesContexts(context)
-        } else if case .key(let context, let key) = state,
-            let (_, dict) = dicts[context]
-        {
-            return candidatesKey(dict, key)
+        } else if case .key(let context, let key) = state {
+            return candidatesKey(fetchDict(context), key)
         }
 
         return []
     }
 
     func candidatesContexts(_ context: String) -> [String] {
-        dicts
+        names
             .compactMap {
                 if context == "" {
                     return (
                         index: $0.key.startIndex,
-                        key: $0.key,
-                        name: $0.value.0
+                        context: $0.key,
+                        name: $0.value
                     )
                 } else if let range = $0.key.range(of: context) {
                     return (
                         index: range.lowerBound,
-                        key: $0.key,
-                        name: $0.value.0
+                        context: $0.key,
+                        name: $0.value
                     )
                 } else {
                     return nil
                 }
             }
             .sorted(by: {
-                ($0.index, $0.key.count, $0.key) < (
-                    $1.index, $1.key.count, $1.key
+                ($0.index, $0.context.count, $0.context) < (
+                    $1.index, $1.context.count, $1.context
                 )
             })
-            .map { $0.key + joinKeyValue + $0.name }
+            .map { $0.context + joinKeyValue + $0.name }
     }
 
     func superkeysSorted(

@@ -1,45 +1,65 @@
 import AppKit
 
 typealias Dict = [String: [String]]
-typealias Dicts = [String: (String, Dict)]
 
-let dictAscii = Dictionary<Dict.Key, Dict.Value>(
-    uniqueKeysWithValues: (UnicodeScalar("!").value...UnicodeScalar("~").value).map {
-        (String(UnicodeScalar($0)!), [String(UnicodeScalar($0)!)])
-    })
+private class NameJson: Decodable {
+    let name: String
+}
 
-let dicts: Dicts = {
+private class DictJson: Decodable {
+    let dict: Dict
+}
+
+private let jsonDecoder = JSONDecoder()
+
+let names = [String: String](
+    uniqueKeysWithValues:
+        Bundle.main.urls(
+            forResourcesWithExtension: "json",
+            subdirectory: "dicts.bundle")!.map {
+            (
+                $0.deletingPathExtension().relativePath,
+                (try? jsonDecoder.decode(
+                    NameJson.self, from: Data(contentsOf: $0)
+                ))?.name ?? ""
+            )
+        }
+)
+
+private var dicts = [String: Dict]()
+
+func fetchDict(_ context: String) -> Dict {
+    if let dict = dicts[context] {
+        return dict
+    } else if let (_, dict) = dictsDefined[context] {
+        dicts[context] = dict.merging(
+            dictAscii, uniquingKeysWith: { a, b in a })
+    } else {
+        let url = Bundle.main.url(
+            forResource: "dicts.bundle/" + context, withExtension: "json")!
+
+        let dictJson = try! jsonDecoder.decode(
+            DictJson.self, from: Data(contentsOf: url)
+        )
+
+        dicts[context] = dictJson.dict.merging(
+            dictAscii, uniquingKeysWith: { a, b in a })
+    }
+
+    return dicts[context]!
+}
+
+let dictAscii = [Dict.Key: Dict.Value](
+    uniqueKeysWithValues: (UnicodeScalar("!").value...UnicodeScalar("~").value)
+        .map {
+            (String(UnicodeScalar($0)!), [String(UnicodeScalar($0)!)])
+        })
+
+let dictsDefined: [String: (String, Dict)] = {
     let unicodes = [0..<0xD800, 0xE000..<0x110000].joined()
 
-    class DictNamed: Decodable {
-        let name: String
-        let dict: [String: [String]]
-    }
-
-    func fetchBundle() -> [(Dicts.Key, Dicts.Value)] {
-        guard
-            let urls = Bundle.main.urls(
-                forResourcesWithExtension: "json", subdirectory: "dicts.bundle")
-        else {
-            return []
-        }
-        return urls.compactMap {
-            let context = $0.deletingPathExtension().relativePath
-
-            if let dictNamed = try? JSONDecoder().decode(
-                DictNamed.self, from: Data(contentsOf: $0))
-            {
-                NSLog("fetched \(context)")
-                return (context, (dictNamed.name, dictNamed.dict))
-            } else {
-                NSLog("failed fetching \(context)")
-                return nil
-            }
-        }
-    }
-
-    let dictUnicodes: [String: [String]] =
-        Dictionary(
+    let dictUnicodes =
+        [String: [String]](
             uniqueKeysWithValues:
                 unicodes.compactMap {
                     UnicodeScalar($0).flatMap { us in
@@ -52,11 +72,6 @@ let dicts: Dicts = {
                         }
                     }
                 }
-        )
-
-    let dictsFetched: Dicts =
-        Dictionary(
-            uniqueKeysWithValues: fetchBundle()
         )
 
     return [
@@ -124,14 +139,7 @@ let dicts: Dicts = {
                 }
             )
         ),
-    ].merging(dictsFetched, uniquingKeysWith: { it, _ in it })
+    ]
 }()
-.mapValues {
-    (
-        name: $0.0,
-        dict: $0.1.merging(
-            dictAscii,
-            uniquingKeysWith: { it, _ in it }
-        )
-    )
-}
+
+let namesDefined = dictsDefined.mapValues { $0.0 }

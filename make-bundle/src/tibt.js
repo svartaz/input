@@ -1,4 +1,4 @@
-const { valueToSingleton } = require("./utility");
+const { valueToSingleton } = require("./_utility");
 
 const dict = {
   ",": "།",
@@ -134,12 +134,8 @@ const dict = {
 
 require("fs").writeFileSync(
   __filename.replace(/\/(?=[^\/]*$)/, "/../../SumiInput/dicts.bundle/") + "on",
-  JSON.stringify(
-    {
-      name: "བོད་ཡིག",
-      dict: valueToSingleton(dict),
-    },
-    null,
-    2,
-  ),
+  JSON.stringify({
+    name: "བོད་ཡིག",
+    dict: valueToSingleton(dict),
+  }),
 );

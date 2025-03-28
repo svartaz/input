@@ -1,5 +1,5 @@
 // https://www.unicode.org/charts/PDF/U1100.pdf
-const { pushUniquelyToValue, dictUnicodeRange, range } = require("./utility");
+const { pushUniquelyToValue, dictUnicodeRange, range } = require("./_utility");
 
 const latnsFromU1100 = [
   // initial

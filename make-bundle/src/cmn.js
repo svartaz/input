@@ -5,7 +5,7 @@ const {
   scToTcs,
   常用國字標準字體表,
   次常用國字標準字體表,
-} = require("./utility.js");
+} = require("./_utility.js");
 
 const inTaiwanStandard = (hanz) =>
   (常用國字標準字體表 + 次常用國字標準字體表).includes(hanz);

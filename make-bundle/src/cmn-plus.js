@@ -5,7 +5,7 @@ const {
   replaceEach,
   pushUniquelyToValue,
   hanzToLatns,
-} = require("./utility.js");
+} = require("./_utility.js");
 
 const dictPlain = require(
   __dirname + "/../../SumiInput/dicts.bundle/cmn.json",

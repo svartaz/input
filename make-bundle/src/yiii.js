@@ -1,6 +1,6 @@
 // https://en.wikipedia.org/wiki/Yi_Syllables
 
-const { dictUnicodeRange, replaceEach } = require("./utility");
+const { dictUnicodeRange, replaceEach } = require("./_utility");
 
 const dict = {
   ...dictUnicodeRange(
