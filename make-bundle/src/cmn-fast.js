@@ -55,10 +55,10 @@ const fastToNormal = {
   l: "eu",
   ".": "au",
 
-  0: "|",
-  p: "/",
-  ":": "<",
-  "?": "\\",
+  0: "/",
+  p: "<",
+  ":": "\\",
+  "?": ">",
 };
 
 const dictNormal = require(

@@ -69,7 +69,7 @@ const pinyinToLatn = (pinyin) => {
     [/(?<=[^iuy])e(?=[gn])/, ""],
     [/(?<=^(z|t?s|j|t?x|r))i$/, ""],
 
-    [/$/, ["|", "/", "<", "\\", "*"][tone]],
+    [/$/, ["/", "<", "\\", ">", "*"][tone]],
   ]);
 };
 
@@ -105,16 +105,16 @@ for (const line of fs
   const word = line.match(/^\p{sc=Han}+(?= )/u)?.[0];
   if (!word) continue;
 
-  const key = line
-    .match(/(?<=\[).+?(?=\])/)[0]
+  let key = line.match(/(?<=\[).+?(?=\])/)[0];
+  if (key === "xx5") continue;
+
+  key = key
     .replace(/ - /g, " ")
     .replace(/u:/g, "ü")
     .split(/ +/g)
     .map(pinyinToLatn)
     // delete tone in poly-syllable word
-    .map((it, _, self) =>
-      2 <= self.length ? it.replace(/[\|\/<\\\*]$/, "") : it,
-    )
+    .map((it, _, self) => (2 <= self.length ? it.replace(/[/<\\>*]$/, "") : it))
     .join(" ");
 
   pushUniquelyToValue(dict, key, word);

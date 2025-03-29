@@ -35,12 +35,12 @@ for (const [k, words] of Object.entries(dictPlain))
           if (latnsMc.every((l) => /[ktp]$/.test(l)))
             // if not nasal coda
             syllable = syllable.replace(
-              /(?<![gn])(?=[|/<\\*]|(?<![|/<\\*])$)/,
+              /(?<![gn])(?=[/<\\>*]|(?<![/<\\>*])$)/,
               "h",
             );
 
           if (latnsMc.every((l) => /m[qs]?$/.test(l)))
-            syllable = syllable.replace(/n(?=[\|\/<\\]?$)/, "m");
+            syllable = syllable.replace(/n(?=[/<\\>*]?$)/, "m");
         }
 
         return syllable;
@@ -53,4 +53,18 @@ for (const [k, words] of Object.entries(dictPlain))
 fs.writeFileSync(
   __filename.replace(/[^\/]+$/, (it) => `../../SumiInput/dicts.bundle/${it}on`),
   JSON.stringify({ name: "華+", dict }),
+);
+
+// extra
+fs.writeFileSync(
+  __filename.replace(
+    /[^\/]+$/,
+    (it) => `../../extra/${it.replace(/\.js/, ".tsv")}`,
+  ),
+
+  Object.entries(dict)
+    .flatMap(([k, ws]) => ws.sort().map((w) => [w, k]))
+    .sort()
+    .map(([w, k]) => w + "\t" + k)
+    .join("\n"),
 );
